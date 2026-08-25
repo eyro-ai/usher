@@ -3,570 +3,244 @@
   :root{
     --paper:#F2F4F6; --surface:#FFFFFF; --ink:#14181D; --body:#333B45;
     --muted:#6B7683; --rule:#DCE1E6; --rule-strong:#C3CBD3; --accent:#1F5C8C;
-    --explicit:#2C6B54; --temporal:#856618; --inferred:#8C4550;
-    --warn-bg:#FBF6EC; --warn-edge:#D9C79A;
+    --keep:#2C6B54; --drop:#8C4550; --warn-bg:#FBF6EC; --warn-edge:#D9C79A;
     --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
     --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
     --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     --measure:66ch;
   }
   @media (prefers-color-scheme:dark){
-    :root{
-      --paper:#0E1216; --surface:#161B21; --ink:#E8ECF0; --body:#B6C0CA;
-      --muted:#7E8A96; --rule:#242C34; --rule-strong:#39434D; --accent:#72AEDC;
-      --explicit:#5FBF97; --temporal:#D4A73C; --inferred:#DE8B95;
-      --warn-bg:#1D1B14; --warn-edge:#4A4128;
-    }
+    :root{--paper:#0E1216;--surface:#161B21;--ink:#E8ECF0;--body:#B6C0CA;--muted:#7E8A96;
+      --rule:#242C34;--rule-strong:#39434D;--accent:#72AEDC;--keep:#5FBF97;--drop:#DE8B95;
+      --warn-bg:#1D1B14;--warn-edge:#4A4128;}
   }
-  :root[data-theme="dark"]{
-    --paper:#0E1216; --surface:#161B21; --ink:#E8ECF0; --body:#B6C0CA;
-    --muted:#7E8A96; --rule:#242C34; --rule-strong:#39434D; --accent:#72AEDC;
-    --explicit:#5FBF97; --temporal:#D4A73C; --inferred:#DE8B95;
-    --warn-bg:#1D1B14; --warn-edge:#4A4128;
-  }
-  :root[data-theme="light"]{
-    --paper:#F2F4F6; --surface:#FFFFFF; --ink:#14181D; --body:#333B45;
-    --muted:#6B7683; --rule:#DCE1E6; --rule-strong:#C3CBD3; --accent:#1F5C8C;
-    --explicit:#2C6B54; --temporal:#856618; --inferred:#8C4550;
-    --warn-bg:#FBF6EC; --warn-edge:#D9C79A;
-  }
+  :root[data-theme="dark"]{--paper:#0E1216;--surface:#161B21;--ink:#E8ECF0;--body:#B6C0CA;
+    --muted:#7E8A96;--rule:#242C34;--rule-strong:#39434D;--accent:#72AEDC;--keep:#5FBF97;
+    --drop:#DE8B95;--warn-bg:#1D1B14;--warn-edge:#4A4128;}
+  :root[data-theme="light"]{--paper:#F2F4F6;--surface:#FFFFFF;--ink:#14181D;--body:#333B45;
+    --muted:#6B7683;--rule:#DCE1E6;--rule-strong:#C3CBD3;--accent:#1F5C8C;--keep:#2C6B54;
+    --drop:#8C4550;--warn-bg:#FBF6EC;--warn-edge:#D9C79A;}
 
   *{box-sizing:border-box}
-  body{background:var(--paper);color:var(--body);font-family:var(--serif);
-    font-size:17px;line-height:1.62;margin:0;
-    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 96px}
-
-  /* ---- masthead ---- */
-  .mast{padding:64px 0 32px;border-bottom:1px solid var(--rule-strong)}
-  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--muted);margin:0 0 20px}
-  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.6vw,46px);
-    line-height:1.14;color:var(--ink);margin:0 0 18px;text-wrap:balance;letter-spacing:-.015em}
-  .thesis{font-size:19px;max-width:var(--measure);margin:0 0 26px;color:var(--body)}
+  body{background:var(--paper);color:var(--body);font-family:var(--serif);font-size:17px;
+    line-height:1.62;margin:0;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px 88px}
+  .mast{padding:60px 0 28px;border-bottom:1px solid var(--rule-strong)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 18px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,44px);line-height:1.14;
+    color:var(--ink);margin:0 0 16px;letter-spacing:-.015em;text-wrap:balance}
+  .thesis{font-size:19px;max-width:var(--measure);margin:0 0 22px}
   .meta{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:4px 9px;
-    border:1px solid var(--rule-strong);border-radius:2px;color:var(--muted);background:var(--surface)}
-  .chip.live{color:var(--explicit);border-color:currentColor}
-  .chip.block{color:var(--inferred);border-color:currentColor}
-
-  /* ---- sections ---- */
-  section{padding:44px 0;border-bottom:1px solid var(--rule)}
-  .shead{display:grid;grid-template-columns:66px 1fr;gap:16px;align-items:baseline;margin:0 0 22px}
+  .chip{font-family:var(--mono);font-size:11px;padding:4px 9px;border:1px solid var(--rule-strong);
+    border-radius:2px;color:var(--muted);background:var(--surface)}
+  .chip.b{color:var(--drop);border-color:currentColor}
+  section{padding:40px 0;border-bottom:1px solid var(--rule)}
+  .shead{display:grid;grid-template-columns:70px 1fr;gap:16px;align-items:baseline;margin:0 0 20px}
   .snum{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);
-    padding-top:6px;text-transform:uppercase}
-  h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.2;
-    color:var(--ink);margin:0;letter-spacing:-.01em;text-wrap:balance}
-  .indent{display:grid;grid-template-columns:66px 1fr;gap:16px}
-  .indent > .gut{font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:4px}
-  p{margin:0 0 15px;max-width:var(--measure)}
-  p:last-child{margin-bottom:0}
+    text-transform:uppercase;padding-top:6px}
+  h2{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.2;color:var(--ink);
+    margin:0;letter-spacing:-.01em;text-wrap:balance}
   h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--ink);margin:30px 0 12px;font-weight:600}
+    color:var(--ink);margin:28px 0 11px;font-weight:600}
+  p{margin:0 0 14px;max-width:var(--measure)}
   strong{color:var(--ink);font-weight:600}
-  code{font-family:var(--mono);font-size:.86em;background:var(--surface);
-    border:1px solid var(--rule);border-radius:2px;padding:1px 5px;color:var(--ink)}
-  a{color:var(--accent)}
-  a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-
-  /* ---- tables ---- */
+  code{font-family:var(--mono);font-size:.85em;background:var(--surface);border:1px solid var(--rule);
+    border-radius:2px;padding:1px 5px;color:var(--ink)}
+  figure{margin:0 0 22px}
+  .dia{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);padding:20px}
+  .dia svg{display:block;width:100%;height:auto;min-width:560px}
+  figcaption{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px;
+    max-width:var(--measure)}
   .tscroll{overflow-x:auto;margin:0 0 16px;border:1px solid var(--rule);background:var(--surface)}
-  table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:13.5px;
-    font-variant-numeric:tabular-nums}
-  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--muted);font-weight:600;
-    padding:11px 14px;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
-  td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5}
+  table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:13.5px}
+  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;padding:10px 13px;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+  td{padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5}
   tr:last-child td{border-bottom:0}
-  td.k{font-family:var(--mono);font-size:12px;color:var(--ink);white-space:nowrap}
-
-  /* ---- semantic provenance ---- */
-  .pv{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:2px;
-    border:1px solid currentColor;white-space:nowrap}
-  .pv.e{color:var(--explicit)} .pv.t{color:var(--temporal)} .pv.i{color:var(--inferred)}
-
-  /* ---- callout ---- */
-  .note{background:var(--warn-bg);border:1px solid var(--warn-edge);
-    padding:16px 18px;margin:18px 0;max-width:var(--measure)}
-  .note .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--muted);display:block;margin-bottom:7px}
-  .note p{font-size:15.5px;margin-bottom:0}
-
-  /* ---- diagrams ---- */
-  .dia{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);
-    padding:24px;margin:8px 0 18px}
-  .dia svg{display:block;min-width:620px;width:100%;height:auto}
-  .cap{font-family:var(--mono);font-size:11px;color:var(--muted);margin:0 0 20px;line-height:1.5}
-
-  /* ---- tier ladder ---- */
-  .ladder{display:flex;flex-direction:column;gap:0;margin:0 0 18px;max-width:var(--measure)}
-  .tier{border:1px solid var(--rule-strong);background:var(--surface);padding:14px 16px}
-  .tier + .tier{border-top:0}
-  .tier .tn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink);display:block;margin-bottom:4px}
-  .tier .td{font-size:14.5px;font-family:var(--sans);color:var(--muted);line-height:1.5}
-  .tier.excl{border-style:dashed;background:transparent}
-  .tier.excl .tn{color:var(--inferred)}
-
-  /* ---- decisions ---- */
-  .dec{border-top:1px solid var(--rule);padding:20px 0}
+  td.k{font-family:var(--mono);font-size:11.5px;color:var(--ink);white-space:nowrap}
+  .note{background:var(--warn-bg);border:1px solid var(--warn-edge);padding:15px 17px;margin:18px 0;
+    max-width:var(--measure)}
+  .note .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);display:block;margin-bottom:6px}
+  .note p{font-size:15.5px;margin:0}
+  .dec{border-top:1px solid var(--rule);padding:14px 0;display:grid;grid-template-columns:52px 1fr;gap:14px}
   .dec:first-of-type{border-top:1px solid var(--rule-strong)}
-  .dhead{display:grid;grid-template-columns:66px 1fr;gap:16px;align-items:baseline}
   .did{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
-  .dtitle{font-family:var(--serif);font-size:19px;color:var(--ink);font-weight:600;margin:0;
-    line-height:1.3;text-wrap:balance}
-  .dbody{grid-column:2;display:flex;flex-direction:column;gap:10px;margin-top:10px}
-  .dbody p{font-size:15.5px;margin:0}
-  .dl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);margin-right:7px}
-  .dec.sup .dtitle{text-decoration:line-through;text-decoration-color:var(--rule-strong);color:var(--muted)}
-
-  ul{margin:0 0 15px;padding-left:20px;max-width:var(--measure)}
-  li{margin-bottom:7px}
-  li::marker{color:var(--muted)}
-
-  footer{padding:36px 0 0;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.7}
-
-  @media (max-width:640px){
-    .shead,.indent,.dhead{grid-template-columns:1fr;gap:6px}
-    .dbody{grid-column:1}
-    .snum{padding-top:0}
-    body{font-size:16px}
-  }
+  .dtxt{font-size:15.5px;margin:0}
+  .dtxt b{color:var(--ink);font-weight:600}
+  .dec.sup .dtxt b{text-decoration:line-through;text-decoration-color:var(--rule-strong);color:var(--muted)}
+  ul{margin:0 0 14px;padding-left:20px;max-width:var(--measure)}
+  li{margin-bottom:6px} li::marker{color:var(--muted)}
+  footer{padding:32px 0 0;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.7}
+  @media (max-width:640px){.shead,.dec{grid-template-columns:1fr;gap:5px}.snum{padding-top:0}body{font-size:16px}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <div class="wrap">
 
 <header class="mast">
-  <p class="eyebrow">Architecture · rev C · 2026-08-12</p>
+  <p class="eyebrow">Architecture · rev D · simplified</p>
   <h1>Recordings KB</h1>
-  <p class="thesis">A searchable memory of voice recordings, with issue tracking and code review as
-  supporting context. Built so that what it tells you is checkable, and what it hides stays hidden.</p>
+  <p class="thesis">A searchable memory of voice recordings, with issues and pull requests as
+  context. One folder, three sources, and a small number of rules that make the answers checkable.</p>
   <div class="meta">
     <span class="chip">Plaud · Linear · GitHub</span>
-    <span class="chip">Drive folders + folder ACLs</span>
-    <span class="chip">3 Claude skills + config</span>
-    <span class="chip live">Design complete</span>
-    <span class="chip block">2 connectors unauthorized</span>
+    <span class="chip">One Drive folder</span>
+    <span class="chip">41 tests · phase 1</span>
+    <span class="chip b">2 connectors unauthorized</span>
   </div>
 </header>
 
 <section>
-  <div class="shead"><span class="snum">Problem</span><h2>Three sources, one of which has no permission model</h2></div>
-  <div class="indent"><span class="gut"></span><div>
-    <p>Voice recordings hold the reasoning behind decisions; issue trackers and pull requests hold the
-    work that followed. Neither is searchable from the other, and recall degrades to whoever
-    remembers the conversation.</p>
-    <p>The hard constraint is access. Linear and GitHub carry real ACLs that can be mirrored. <strong>A
-    pocket recorder does not.</strong> A recording belongs to whoever was carrying the device, captures
-    people who never opted in, and has no org permission model to inherit — so every recording needs a
-    sensitivity label assigned rather than derived. That single asymmetry shapes most of what follows.</p>
-  </div></div>
+  <div class="shead"><span class="snum">Shape</span><h2>End to end</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 900 300" role="img" aria-label="Three sources flow through an exclusion gate and distillation into a single Drive folder holding documents and a two-tab index, which retrieval reads back through a filter, lexical and rerank funnel.">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11">
+
+          <text x="0" y="12" font-size="9.5" letter-spacing="1.3" fill="var(--muted)">SOURCES</text>
+          <g fill="var(--surface)" stroke="var(--rule-strong)">
+            <rect x="0" y="22" width="104" height="28"/><rect x="0" y="56" width="104" height="28"/>
+            <rect x="0" y="90" width="104" height="28"/>
+          </g>
+          <g fill="var(--ink)"><text x="12" y="40">Plaud</text><text x="12" y="74">Linear</text>
+            <text x="12" y="108">GitHub</text></g>
+          <text x="12" y="134" font-size="9" fill="var(--muted)">corpus · context · context</text>
+
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#ar)">
+            <path d="M104,36 L150,52"/><path d="M104,70 L150,66"/><path d="M104,104 L150,80"/>
+          </g>
+
+          <rect x="154" y="30" width="120" height="76" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="166" y="50" fill="var(--ink)">exclusion</text><text x="166" y="66" fill="var(--ink)">gate</text>
+          <text x="166" y="86" font-size="9" fill="var(--muted)">before fetch</text>
+          <text x="166" y="99" font-size="9" fill="var(--muted)">logs rule + count</text>
+
+          <rect x="304" y="30" width="120" height="76" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="316" y="50" fill="var(--ink)">distill</text>
+          <text x="316" y="70" font-size="9" fill="var(--keep)">evidence must be</text>
+          <text x="316" y="83" font-size="9" fill="var(--keep)">verbatim, or dropped</text>
+          <text x="316" y="99" font-size="9" fill="var(--muted)">3–15 claims</text>
+
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#ar)">
+            <path d="M274,68 L300,68"/><path d="M424,68 L470,68"/>
+          </g>
+
+          <rect x="474" y="16" width="230" height="140" fill="none" stroke="var(--accent)" stroke-dasharray="3 3"/>
+          <text x="486" y="34" font-size="9.5" letter-spacing="1.1" fill="var(--accent)">ONE DRIVE FOLDER</text>
+          <g fill="var(--surface)" stroke="var(--rule-strong)">
+            <rect x="486" y="42" width="206" height="32"/><rect x="486" y="80" width="206" height="38"/>
+            <rect x="486" y="124" width="206" height="26"/>
+          </g>
+          <text x="496" y="62" fill="var(--ink)" font-size="10.5">records/ — Docs (raw)</text>
+          <text x="496" y="98" fill="var(--ink)" font-size="10.5">index — Records | Claims</text>
+          <text x="496" y="113" fill="var(--muted)" font-size="9">derived · safe to delete</text>
+          <text x="496" y="141" fill="var(--ink)" font-size="10.5">.cache — by content_hash</text>
+          <text x="486" y="176" font-size="9" fill="var(--muted)">ordinary Drive sharing — whoever can open it, reads it</text>
+
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#ar)">
+            <path d="M589,156 L589,196"/>
+          </g>
+
+          <text x="0" y="200" font-size="9.5" letter-spacing="1.3" fill="var(--muted)">RETRIEVAL</text>
+          <rect x="0" y="208" width="900" height="60" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <g fill="var(--ink)" font-size="10.5">
+            <text x="16" y="230">resolve names → ids</text><text x="176" y="230">→ metadata filter</text>
+            <text x="330" y="230">→ lexical</text><text x="430" y="230">→ rerank</text>
+            <text x="530" y="230">→ refetch mutable</text><text x="690" y="230">→ cite + date</text>
+          </g>
+          <text x="16" y="250" font-size="9" fill="var(--muted)">before filtering, never after — an unresolved alias returns silence</text>
+          <text x="530" y="250" font-size="9" fill="var(--muted)">Linear + open PRs are never read from the sheet</text>
+          <text x="0" y="288" font-size="9" fill="var(--muted)">No tiers. No edge table. No promotion flow. No embedding store.</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>The whole system. Everything the earlier design added on top of this — permission
+    classes, cross-source edges, promotion and drift detection — was removed by D12.</figcaption>
+  </figure>
 </section>
 
 <section>
-  <div class="shead"><span class="snum">Shape</span><h2>Pipeline and tiers</h2></div>
-  <div class="dia">
-    <svg viewBox="0 0 700 268" role="img" aria-label="Sources flow through gates into three isolated tier stores, which retrieval reads back through the access boundary.">
-      <defs>
-        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
-        </marker>
-      </defs>
-      <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" color="currentColor">
+  <div class="shead"><span class="snum">Store</span><h2>What is kept, and what is disposable</h2></div>
+  <div class="tscroll"><table>
+    <thead><tr><th>Artifact</th><th>Holds</th><th>Derived?</th></tr></thead>
+    <tbody>
+      <tr><td class="k">records/*.gdoc</td><td>Raw transcripts and merged-PR snapshots. Identity stamped into <code>appProperties</code>, so renames and moves cannot break it.</td><td>no — the corpus</td></tr>
+      <tr><td class="k">index → Records</td><td>One row per recording, issue, or PR. Keyed <code>{source}:{source_id}</code>. No status column, ever.</td><td><strong>yes</strong></td></tr>
+      <tr><td class="k">index → Claims</td><td>Distilled statements with verbatim evidence and an anchor back into the Doc.</td><td><strong>yes</strong></td></tr>
+      <tr><td class="k">.cache</td><td>Claims by <code>content_hash</code>. Losing it costs LLM spend, not data.</td><td>yes</td></tr>
+      <tr><td class="k">Entities</td><td>Optional alias map: speaker ↔ Linear user ↔ GitHub handle.</td><td>no</td></tr>
+    </tbody>
+  </table></div>
+  <p>Because the index is derived, a rebuild regenerates it from whatever is actually in the folder.
+  Files that vanished stop appearing; <strong>moves and renames need no handling at all</strong>,
+  since identity lives in file metadata rather than in a path. Deleting the whole index and
+  rebuilding is routine, not recovery.</p>
+</section>
 
-        <text x="0" y="12" fill="var(--muted)" font-size="10" letter-spacing="1.4">SOURCES</text>
-        <g fill="var(--surface)" stroke="var(--rule-strong)">
-          <rect x="0" y="24" width="118" height="30"/><rect x="0" y="62" width="118" height="30"/><rect x="0" y="100" width="118" height="30"/>
-        </g>
-        <g fill="var(--ink)">
-          <text x="12" y="43">Plaud</text><text x="12" y="81">Linear</text><text x="12" y="119">GitHub</text>
-        </g>
-        <text x="12" y="148" fill="var(--muted)" font-size="9.5">corpus / context / context</text>
-
-        <g stroke="var(--rule-strong)" fill="none" color="var(--rule-strong)" marker-end="url(#ar)">
-          <path d="M118,39 L176,39"/><path d="M118,77 L176,77"/><path d="M118,115 L176,115"/>
-        </g>
-
-        <text x="180" y="12" fill="var(--muted)" font-size="10" letter-spacing="1.4">INGEST</text>
-        <rect x="180" y="24" width="150" height="106" fill="var(--surface)" stroke="var(--rule-strong)"/>
-        <g fill="var(--ink)" font-size="10.5">
-          <text x="192" y="45">1 · exclusion gate</text>
-          <text x="192" y="66">2 · tier resolve</text>
-          <text x="192" y="87">3 · write raw</text>
-          <text x="192" y="108">4 · distill + verify</text>
-        </g>
-        <text x="192" y="148" fill="var(--muted)" font-size="9.5">default deny</text>
-
-        <g stroke="var(--rule-strong)" fill="none" color="var(--rule-strong)" marker-end="url(#ar)">
-          <path d="M330,50 L392,42"/><path d="M330,77 L392,77"/><path d="M330,104 L392,112"/>
-        </g>
-
-        <text x="396" y="12" fill="var(--muted)" font-size="10" letter-spacing="1.4">CLASSES · ONE PER DISTINCT ACL</text>
-        <g fill="var(--surface)" stroke="var(--rule-strong)">
-          <rect x="396" y="24" width="176" height="34"/><rect x="396" y="62" width="176" height="34"/><rect x="396" y="100" width="176" height="34"/>
-        </g>
-        <g fill="var(--ink)">
-          <text x="408" y="45">owner-only</text><text x="408" y="83">discovered · N</text><text x="408" y="121">workspace</text>
-        </g>
-        <g fill="var(--muted)" font-size="9">
-          <text x="496" y="45">folder ACL</text><text x="496" y="83">folder ACL</text><text x="496" y="121">folder ACL</text>
-        </g>
-        <text x="408" y="152" fill="var(--muted)" font-size="9.5">docs + derived index, rebuilt by scan</text>
-
-        <line x1="600" y1="18" x2="600" y2="180" stroke="var(--accent)" stroke-dasharray="3 4"/>
-        <text x="608" y="100" fill="var(--accent)" font-size="9.5" letter-spacing="1">ACL</text>
-
-        <g stroke="var(--accent)" fill="none" color="var(--accent)" marker-end="url(#ar)">
-          <path d="M572,41 L648,41 L648,196"/><path d="M572,79 L634,79 L634,196"/><path d="M572,117 L620,117 L620,196"/>
-        </g>
-
-        <text x="0" y="196" fill="var(--muted)" font-size="10" letter-spacing="1.4">RETRIEVAL</text>
-        <rect x="0" y="206" width="700" height="48" fill="var(--surface)" stroke="var(--rule-strong)"/>
-        <g fill="var(--ink)" font-size="10.5">
-          <text x="16" y="227">metadata filter</text><text x="150" y="227">→ lexical</text>
-          <text x="248" y="227">→ semantic rerank</text><text x="392" y="227">→ refetch mutable</text>
-          <text x="540" y="227">→ cite + scope</text>
-        </g>
-        <text x="16" y="244" fill="var(--muted)" font-size="9.5">reads only the tiers the asking human can already open — no filter layer</text>
-      </g>
-    </svg>
+<section>
+  <div class="shead"><span class="snum">Rules</span><h2>The four that earn their place</h2></div>
+  <p>Each is cheap, and each prevents a failure that is invisible from the reader's side.</p>
+  <h3>Evidence must be verbatim</h3>
+  <p>Every claim carries a span copied exactly from the source, checked by substring containment. A
+  claim that fails is discarded, never repaired. This is what makes an answer checkable rather than
+  merely trusted, and it costs one string comparison.</p>
+  <h3>The skip log cannot describe what it skipped</h3>
+  <p>Excluded material is logged as a rule id and a count — <code>skipped 3 item(s) (rule:
+  no_one_to_ones)</code>. A descriptive log recreates the excluded content somewhere else, which is
+  the leak the exclusion existed to prevent. The trap is that a helpful log is the obvious thing to
+  write.</p>
+  <h3>Mutable records are refetched, never read from the sheet</h3>
+  <p>Linear issues and open PRs supply identity and a link, nothing more. If the source is
+  unreachable, the answer says so — a quiet fallback to a cached row is unfalsifiable from the
+  reader's side, which is what makes it corrosive.</p>
+  <h3>Names resolve to ids before filtering</h3>
+  <p>Participants are stored as ids, so matching a raw name returns zero rows — silently, and
+  indistinguishably from genuine absence. Nobody investigates an empty result, which makes this the
+  most deceptive bug available here.</p>
+  <div class="note"><span class="lbl">And one thing never done</span>
+    <p>Counts from the KB are never presented as measurements. "Three people raised churn" is false;
+    the truth is that churn appears in three recordings that happened to be captured and ingested.
+    The corpus is a convenience sample that merely looks tabular.</p>
   </div>
-  <p class="cap">Tiers are Drive folders, not rows with a permission column. People reorganize
-  documents inside them by hand; indexes are rebuilt from what is found. Retrieval attempts each
-  folder; Drive denies what it will.</p>
 </section>
 
 <section>
-  <div class="shead"><span class="snum">§1</span><h2>Data model</h2></div>
-  <div class="indent"><span class="gut">tabs</span><div>
-    <p><strong>The folder tree is the schema.</strong> A tier is a Drive folder whose sharing
-    settings are its ACL; the index lives inside that folder and inherits them. Below
-    <code>records/</code>, people arrange documents however they like — subfolder structure carries
-    no meaning to the system, which reads only the boundary. Indexes are caches, rebuilt from
-    whatever is actually on disk.</p>
-    <div class="tscroll"><table>
-      <thead><tr><th>Tab</th><th>Row is</th><th>Key</th><th>Carries</th></tr></thead>
-      <tbody>
-        <tr><td class="k">Records</td><td>One source event</td><td class="k">{source}:{source_id}</td>
-          <td>Title, <code>occurred_at</code>, participants, tier, <code>raw_doc_id</code>, <code>mutable</code>, <code>content_hash</code></td></tr>
-        <tr><td class="k">Claims</td><td>One distilled statement</td><td class="k">{record_id}#{n}</td>
-          <td>Statement, type, speaker, confidence, <strong>verbatim evidence</strong>, anchor</td></tr>
-        <tr><td class="k">Links</td><td>One cross-source edge</td><td class="k">link_id</td>
-          <td>From, to, <strong>basis</strong>, confidence</td></tr>
-        <tr><td class="k">Entities</td><td>One person or project</td><td class="k">entity_id</td>
-          <td>Aliases: recorder label ↔ Linear user ↔ GitHub handle</td></tr>
-      </tbody>
-    </table></div>
+  <div class="shead"><span class="snum">Log</span><h2>Decisions, including the ones reversed</h2></div>
 
-    <h3>Atomic unit</h3>
-    <p>One row per recording, per issue, per pull request — <strong>never per commit</strong>. Mixed
-    granularity is what quietly destroys ranking: long documents match everything, so relevance stops
-    meaning anything.</p>
-
-    <h3>Copy the immutable, link the mutable</h3>
-    <div class="tscroll"><table>
-      <thead><tr><th>Content</th><th>Immutable</th><th>Treatment</th></tr></thead>
-      <tbody>
-        <tr><td>Recording + transcript</td><td class="k">yes</td><td>Full copy into a Doc. This is the corpus.</td></tr>
-        <tr><td>Merged pull request</td><td class="k">yes</td><td>Snapshot Doc as at merge.</td></tr>
-        <tr><td>Open pull request</td><td class="k">no</td><td>Row + link. <code>mutable = TRUE</code></td></tr>
-        <tr><td>Linear issue / project</td><td class="k">no</td><td>Row + link. Status always refetched.</td></tr>
-      </tbody>
-    </table></div>
-    <p>There is deliberately <strong>no status column anywhere</strong>. Caching issue state is the
-    single change that would make the KB start lying, and a reader cannot tell a stale cell from a
-    fresh one.</p>
-
-    <h3>Two layers, never merged</h3>
-    <p>Raw text is preserved untouched; distillation writes to separate rows. Retrieval hits the
-    distilled layer, because transcripts are long, full of filler and recognition errors, and match
-    almost any query. Keeping raw intact means distillation can be re-run whenever prompts improve.</p>
-
-    <h3>Edge provenance is a column, not a vibe</h3>
-    <p>Every cross-source edge records how it was derived, and the three are never presented as
-    equivalent:</p>
-    <ul>
-      <li><span class="pv e">explicit-id</span> A ticket ID in a branch, PR title, or commit. A fact. Traversed freely.</li>
-      <li><span class="pv t">time-proximity</span> Co-occurrence in time. A candidate, not a finding.</li>
-      <li><span class="pv i">llm-inferred</span> A model's guess. Traversed only on explicitly exploratory questions, with the whole branch marked.</li>
-    </ul>
-    <p>An edge is materialized <strong>only in the class that can see both of its endpoints</strong> —
-    the intersection of their audiences. If that intersection is empty, the edge exists nowhere.
-    Restrictiveness is a partial order once classes are discovered rather than ranked: two teams are
-    incomparable, neither stricter, so "store it at the more restricted end" has no meaning.</p>
-    <p>Without this, inferred links harden into false history over months and nothing distinguishes
-    them afterwards.</p>
-
-    <div class="note"><span class="lbl">Drift — what a rebuild cannot fix</span>
-      <p>Most integrity errors vanish once the index is derived: a rebuild regenerates it from what
-      is on disk, and vanished files simply stop appearing. What remains is the trap in Drive's
-      permission model — <strong>folder ACLs are inherited, but shares granted directly on a file
-      survive a move</strong>. A document dragged from Open into Personal can stay readable by
-      whoever held a direct share. Reconcile checks each file's <em>effective</em> permissions;
-      folder inheritance is not proof of access.</p>
-    </div>
-  </div></div>
+  <div class="dec"><span class="did">D1</span><p class="dtxt"><b>Standalone KB.</b> Own schema, own skills.</p></div>
+  <div class="dec"><span class="did">D2</span><p class="dtxt"><b>Purpose is recall, not automation.</b> "What was said about X" — explicitly not traceability, ticket creation, or status reporting. D12 exists because the design had drifted away from this.</p></div>
+  <div class="dec"><span class="did">D3</span><p class="dtxt"><b>Three sources.</b> Recordings are the corpus; Linear and GitHub are context. Adapter-shaped, so any subset can run.</p></div>
+  <div class="dec sup"><span class="did">D4</span><p class="dtxt"><b>Storage: Notion.</b> Superseded by D8 — pages could not be deleted, making a mis-filed write permanent, and relations could not carry properties.</p></div>
+  <div class="dec sup"><span class="did">D5</span><p class="dtxt"><b>Tier partitioning with default deny.</b> Superseded by D12. Built on a requirement — who else reads this — that was never confirmed.</p></div>
+  <div class="dec"><span class="did">D6</span><p class="dtxt"><b>Generic, not organisation-specific.</b> No teams, repos, or ids in the skills; everything deployment-specific lives in one config file.</p></div>
+  <div class="dec"><span class="did">D7</span><p class="dtxt"><b>Skills plus a config file</b> as the user-facing surface. Amended by D11.</p></div>
+  <div class="dec"><span class="did">D8</span><p class="dtxt"><b>Storage: Google Drive.</b> Originally chosen for its ACLs; after D12 it is simply a good place — deletion works, Docs are full-text indexed, and people can browse it.</p></div>
+  <div class="dec"><span class="did">D9</span><p class="dtxt"><b>Folders organize; indexes are derived and rebuildable.</b> Survives D12 intact, and is the reason hand-reorganisation costs nothing.</p></div>
+  <div class="dec sup"><span class="did">D10</span><p class="dtxt"><b>Permission classes discovered from ACLs.</b> Superseded by D12 along with the rest of the access model.</p></div>
+  <div class="dec"><span class="did">D11</span><p class="dtxt"><b>Tested rule library; Drive via the Google API.</b> The rules that decide whether the system fabricates are code with tests, not prose in a skill.</p></div>
+  <div class="dec"><span class="did">D12</span><p class="dtxt"><b>Cut back to the stated purpose.</b> One folder, no access model, no edge table. Seven decisions had chained off a single unconfirmed premise, and cross-source linking was never asked for — it was the option D2 rejected.</p></div>
 </section>
 
 <section>
-  <div class="shead"><span class="snum">§2</span><h2>Access model</h2></div>
-  <div class="indent"><span class="gut">tiers</span><div>
-    <p>The governing rule: <strong>an artifact inherits the maximum sensitivity of everything it was
-    derived from</strong> — summaries, rollups, the entity graph, and titles alike. Existence is
-    information; a title can leak what a locked body protects.</p>
-    <div class="ladder">
-      <div class="tier"><span class="tn">Owner-only folder</span><span class="td">The default landing zone. No ladder needed to define it — shared with nobody is the bottom of any permission lattice.</span></div>
-      <div class="tier"><span class="tn">…every distinct ACL found in the tree</span><span class="td">Each becomes a class, discovered by scan. Two teams with separately-shared folders become two classes without anyone naming them.</span></div>
-      <div class="tier"><span class="tn">Workspace-shared folder</span><span class="td">Simply the widest class that happens to exist.</span></div>
-      <div class="tier excl"><span class="tn">Excluded — never ingested</span><span class="td">1:1s, HR, compensation, legal, health. Not a tier: this content never enters the system at all.</span></div>
-    </div>
-
-    <h3>Classes are discovered, not declared</h3>
-    <p>There is no configured personal/group/open ladder. The system computes each folder's effective
-    ACL and groups folders sharing one audience into a <strong>class</strong>. The grouping cannot be
-    dropped entirely, because of one constraint:</p>
-    <p><strong>A derived artifact can only be shared with the intersection of its inputs'
-    audiences.</strong> Raw documents are fine at any granularity — Drive enforces each one. An index
-    is not: it is a single file with a single ACL, so every row is visible to anyone who can open it.
-    Hence one index per distinct audience. That is what a tier always was; the error was declaring it
-    rather than discovering it.</p>
-
-    <h3>The folder is the boundary</h3>
-    <p>Enforcement is Drive's own folder ACL, not a query-time filter. A filter needs a trusted
-    enforcement point and a permission table that drifts; worse, a filter applied by an agent is a
-    filter an agent can be argued out of. Because the file is Drive's permission unit, one sheet
-    cannot hold rows of differing sensitivity — so each tier folder carries its own index, and the
-    layout enforces what would otherwise be a rule someone has to remember.</p>
-    <p><strong>The folder is also the only authority on class.</strong> Nothing stores a label to be
-    compared against reality; membership is computed from the ACL on every rebuild, so the two cannot
-    disagree.</p>
-    <p>The price is that <em>share changes re-partition the derived layer with no file move to
-    detect</em>. Editing a folder's sharing invalidates indexes while the tree looks identical, so
-    reconcile scans effective ACLs every run rather than only walking files.</p>
-    <p>The cost is bluntness: some material sits in a tier more restrictive than strictly necessary.
-    That is the correct direction to fail — someone has to ask, rather than someone seeing what they
-    shouldn't.</p>
-
-    <div class="note"><span class="lbl">Three leaks that look like features</span>
-      <p><strong>Descriptive skip logs.</strong> Recording <em>why</em> an excluded item was skipped
-      reconstructs it in a file with different permissions. Log the rule and a count, never the title.<br><br>
-      <strong>Suppressed-result counts.</strong> “3 further results exist in tiers you cannot access”
-      is an existence leak. Out-of-scope material is absent, not redacted.<br><br>
-      <strong>Saving a good answer back.</strong> A cross-tier synthesis written into a lower tier
-      moves restricted content across the boundary. Answering across tiers you hold is fine;
-      persisting it downward is not.</p>
-    </div>
-    <p>Agent identity closes the loop: the agent always acts with the asking human's own credentials.
-    A service token holding everyone's access, answering for individuals, turns the KB into a
-    privilege-escalation device.</p>
-  </div></div>
-</section>
-
-<section>
-  <div class="shead"><span class="snum">§3</span><h2>Ingest</h2></div>
-  <div class="indent"><span class="gut">flow</span><div>
-    <p>Watermark-driven and incremental. A full rescan exists only as an explicit rebuild when the
-    extractor version changes.</p>
-    <div class="tscroll"><table>
-      <thead><tr><th>Step</th><th>Rule</th><th>Why</th></tr></thead>
-      <tbody>
-        <tr><td class="k">1 · exclude</td><td>Evaluate never-ingest patterns before content is fetched</td><td>Excluded material never enters the agent's context at all</td></tr>
-        <tr><td class="k">2 · tier</td><td>Unresolved ⇒ Personal, always</td><td>Over-restriction costs a question; under-restriction costs an incident</td></tr>
-        <tr><td class="k">3 · write</td><td>Raw Doc written <em>directly</em> into the target tier</td><td>Write-then-move leaves content at the wrong ACL for a window</td></tr>
-        <tr><td class="k">4 · distill</td><td>Evidence must appear verbatim; failures discarded, not repaired</td><td>Substring containment is a decisive, judgement-free fabrication check</td></tr>
-        <tr><td class="k">5 · link</td><td>Edge stored only where <em>both</em> endpoints are visible</td><td>Otherwise the edge table leaks the existence of records you cannot open</td></tr>
-        <tr><td class="k">6 · commit</td><td>Watermark advances only after the record fully lands</td><td>A crash mid-record retries; it does not silently skip</td></tr>
-      </tbody>
-    </table></div>
-    <p>Distillation is contracted to 3–15 claims per record — an extractor emitting forty dilutes
-    retrieval until ranking is meaningless. Re-extraction <strong>replaces all claims wholesale</strong>
-    rather than merging, because merged versions produce near-duplicates that never converge.</p>
-    <p>Deduplication keys on the stable source ID, never the title: recording titles are not unique,
-    and titles are the thing most likely to change upstream. Identity is stamped into hidden Drive
-    file metadata, so it survives the renaming and reorganising people do by hand — paths and
-    filenames are never used to identify a document.</p>
-
-    <h3>Rebuild is the normal path</h3>
-    <p>Indexes are caches, and regenerating one is routine rather than recovery. A rebuild walks the
-    tier folder, reads each file's identity stamp, refetches the link-only records, and rewrites the
-    index from what is actually there. Files that vanished stop appearing; files that arrived appear.
-    <strong>Moves need no special handling, because nothing tracked where a document used to be.</strong></p>
-    <p>Distillation is the only expensive step, so claims are cached by content hash and scoped per
-    tier. Content addressing makes the cache immune to reorganisation <em>within</em> a tier — a
-    rebuild after a reshuffle costs almost nothing. A document moved <em>between</em> tiers misses
-    the cache and re-distills, which is the correct security behaviour: claims must never pre-exist
-    in a tier before the document arrives.</p>
-  </div></div>
-</section>
-
-<section>
-  <div class="shead"><span class="snum">§4</span><h2>Retrieval</h2></div>
-  <div class="indent"><span class="gut">funnel</span><div>
-    <p><strong>Scope is discovered, not configured.</strong> The skill holds no table of who may read
-    what — it attempts each tier store and lets Drive deny. Consequence: the same question yields
-    different answers for different people. Correct, but it makes the scope note mandatory, since an
-    unscoped partial answer reads exactly like a complete one.</p>
-    <div class="tscroll"><table>
-      <thead><tr><th>Stage</th><th>Mechanism</th><th>Handles</th></tr></thead>
-      <tbody>
-        <tr><td class="k">1 metadata</td><td>Sheet columns: date, participants, source, topic, type</td><td>Most questions are scoped. Exact and free.</td></tr>
-        <tr><td class="k">2 lexical</td><td>Claim text + Drive full-text over raw Docs</td><td>Names, ticket IDs, error strings — what semantic search is worst at</td></tr>
-        <tr><td class="k">3 semantic</td><td>Agent reranks the candidate set</td><td>Conceptual recall only</td></tr>
-      </tbody>
-    </table></div>
-    <p><strong>No embedding store.</strong> At this corpus size, full-text plus distilled statements
-    plus agent reranking beats a vector index that must resync on every re-extraction. The sync
-    burden lands immediately; the recall benefit lands much later, if ever.</p>
-    <p>Anything marked mutable is refetched live before it enters an answer. If the source is
-    unreachable the answer says so — a quiet fallback to a cached row is unfalsifiable from the
-    reader's side.</p>
-
-    <h3>What every answer carries</h3>
-    <p>Supporting claims with source links and dates; provenance for anything reached through an
-    inferred edge; which tiers were searched; “as of” stamps on live data; and an explicit
-    <em>not found</em> rather than plausible filler. What was <em>said</em>, what was
-    <em>inferred</em>, and what is <em>live</em> stay visually distinct.</p>
-
-    <div class="note"><span class="lbl">Two failure modes worth naming</span>
-      <p><strong>Unresolved aliases return silence.</strong> Participants are stored as IDs, so
-      matching a raw name returns zero — indistinguishable from genuine absence. Names resolve to
-      entity IDs before filtering, never after.<br><br>
-      <strong>Counts are not measurements.</strong> “Three people raised churn” is false; the truth is
-      that churn appears in three recordings that happened to be captured, ingested, and are readable
-      by you. The corpus is a convenience sample that merely looks tabular.</p>
-    </div>
-  </div></div>
-</section>
-
-<section>
-  <div class="shead"><span class="snum">§5</span><h2>Tier changes</h2></div>
-  <div class="indent"><span class="gut">by hand</span><div>
-    <p>A tier change is a person dragging a document between folders in Drive. There is no
-    tool-mediated move, and the tooling cannot require one.</p>
-    <div class="note"><span class="lbl">The trade this makes</span>
-      <p>Safety checks become <strong>detective rather than preventive</strong>. Participant exposure
-      and exclusion rules can no longer block a move — they run at the next reconcile and report. The
-      interval between a careless drag and that reconcile is genuine exposure, and no tooling closes
-      it while hand-moves remain the interface. A <code>promote</code> helper runs the checks first
-      for those who want them, but it is a convenience, not a gate.</p>
-    </div>
-    <p>Reconcile therefore checks, after the fact: exclusion rules re-evaluated against the new tier,
-    participant exposure flagged for a human, effective file permissions compared against the folder,
-    and edges re-materialized at the intersection of their endpoints' audiences.</p>
-
-    <h3>Demotion is containment, not erasure</h3>
-    <p>Moving a document somewhere more restrictive does not undo exposure. Whoever read it, read it;
-    Drive keeps revision history; copies others made are untouched. <strong>Shares granted directly
-    on the file while it sat in the open persist through the move</strong> and must be revoked
-    explicitly — which is precisely why effective permissions are checked rather than assumed.</p>
-
-    <h3>Claims follow their document for free</h3>
-    <p>Because claims are regenerated at the document's current location, a hand-move needs no
-    bookkeeping: the old tier's rebuild stops emitting them, the new tier's produces them. Nothing is
-    migrated, nothing is orphaned in a sheet the person never knew existed. This is the main dividend
-    of making indexes disposable — the failure where a moved file leaves stale derived rows behind
-    cannot arise.</p>
-  </div></div>
-</section>
-
-<section>
-  <div class="shead"><span class="snum">Decisions</span><h2>What was decided, and what it cost</h2></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D1</span><p class="dtitle">Standalone, not an extension of an existing KB</p>
-    <div class="dbody"><p><span class="dl">why</span>A different corpus and a different access
-    problem than a meeting-notes graph fed by scheduled calls.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D2</span><p class="dtitle">Purpose is recall, not automation</p>
-    <div class="dbody"><p><span class="dl">why</span>Optimizing for “what was said about X” rather than
-    ticket creation or status reporting.</p>
-    <p><span class="dl">cost</span>Effort goes to ingest quality and retrieval; no write-back into
-    Linear or GitHub.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D3</span><p class="dtitle">Three sources, adapter-shaped</p>
-    <div class="dbody"><p><span class="dl">why</span>Recordings are the corpus; issues and pull requests
-    are context. Any subset can be enabled; only the recorder is required.</p></div></div></div>
-
-  <div class="dec sup"><div class="dhead"><span class="did">D4</span><p class="dtitle">Storage: Notion</p>
-    <div class="dbody"><p><span class="dl">superseded by D8</span>Retained for the trail. Two properties
-    killed it: pages could be created and moved but <strong>never deleted</strong>, making a mis-tiered
-    write permanent under a default-deny policy; and relations could not carry properties, forcing edge
-    provenance into a workaround.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D5</span><p class="dtitle">Tier partitioning with default deny</p>
-    <div class="dbody"><p><span class="dl">why</span>The recorder has no source ACL to mirror, so labels
-    must be assigned regardless. Partitioning enforces by possession, which survives a dumb store and
-    an argumentative agent.</p>
-    <p><span class="dl">cost</span>Coarser than per-document permissions; cross-tier synthesis needs
-    both tiers held.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D6</span><p class="dtitle">Generic, not organisation-specific</p>
-    <div class="dbody"><p><span class="dl">why</span>No teams, repos, folder names, or store IDs in the
-    skills. Everything deployment-specific lives in one config file.</p>
-    <p><span class="dl">effect</span>Solo versus team stops being a design choice and becomes
-    configuration — a single-user deployment simply has one tier.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D7</span><p class="dtitle">Packaging: three skills plus a config file</p>
-    <div class="dbody"><p><span class="dl">why</span>Ingest, search, promote. No build step and no
-    service; the agent drives the connectors directly.</p>
-    <p><span class="dl">cost</span>Weakest at bulk and scheduled sync — mitigated by a scheduled routine
-    if it bites.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D8</span><p class="dtitle">Storage: Google Drive, company workspace</p>
-    <div class="dbody"><p><span class="dl">why</span>Deletion actually works, which de-risks default
-    deny. Folder sharing maps onto tiers directly (refined by D9), so a tier change is an ordinary
-    file move: visible, auditable, and reversible. Edge provenance becomes an ordinary column. Full-text indexing of Docs supplies the
-    lexical layer at no cost.</p>
-    <p><span class="dl">cost</span>No database primitives — no typed properties, relations, or views.
-    Referential integrity is ours to keep. The file is the permission unit, so the index must shard per
-    tier.</p></div></div></div>
-  <div class="dec"><div class="dhead"><span class="did">D9</span><p class="dtitle">Folders organize; indexes are derived and disposable</p>
-    <div class="dbody"><p><span class="dl">rule</span>Data lives in folders. People move original
-    documents by hand, freely. Every index rebuilds automatically. Access is the Drive folder's own
-    ACL.</p>
-    <p><span class="dl">gain</span>The folder becomes the single authority on tier — a label cannot
-    disagree with reality because it is read from reality. Hand-moves need no bookkeeping, and
-    rebuild-from-scratch removes a whole class of integrity bugs.</p>
-    <p><span class="dl">cost</span>Promotion checks become detective rather than preventive. Drive's
-    direct-share behaviour survives moves, so effective permissions must be verified rather than
-    inferred from the folder. Moving between classes re-runs distillation.</p></div></div></div>
-
-  <div class="dec"><div class="dhead"><span class="did">D10</span><p class="dtitle">Permission classes discovered from ACLs, replacing the declared ladder</p>
-    <div class="dbody"><p><span class="dl">why</span>A derived artifact can only be shared with the
-    intersection of its inputs' audiences, so one index per distinct audience is unavoidable — but
-    that grouping can be <em>discovered</em> from effective ACLs instead of declared as a fixed
-    ladder.</p>
-    <p><span class="dl">gain</span>Arbitrary fine-grained sharing works; configuration loses the whole
-    tiers block, leaving only roots and a default landing folder.</p>
-    <p><span class="dl">cost</span>Index count scales with distinct ACLs, so ad-hoc per-file sharing
-    multiplies classes. Restrictiveness becomes a partial order, changing the edge rule to an
-    intersection. Share changes re-partition the derived layer with no file move to detect, so
-    reconcile must scan ACLs every run.</p></div></div></div>
-</section>
-
-<section>
-  <div class="shead"><span class="snum">Risk</span><h2>Assumptions not yet verified</h2></div>
-  <div class="indent"><span class="gut"></span><div>
-    <p>The recorder's connector is unauthorized, so its tool surface is assumed rather than known. The
-    design assumes it returns a stable ID, timestamp, and <strong>full transcript text</strong>.</p>
-    <ul>
-      <li><strong>Summaries only, no transcript</strong> — verbatim evidence becomes impossible and
-      claims stop being checkable. Material enough to reopen the data model, not patch around.</li>
-      <li><strong>No speaker segmentation</strong> — attribution stays mostly empty, weakening the
-      identity join across sources.</li>
-      <li><strong>No folders or tags</strong> — nothing derives tier, so every recording is labelled by
-      hand and promotion becomes the primary interaction rather than an occasional one.</li>
-    </ul>
-    <p>These are assumptions, recorded as such. Verify before building.</p>
-  </div></div>
+  <div class="shead"><span class="snum">Risk</span><h2>Not yet verified</h2></div>
+  <p>The Plaud connector is unauthorized, so its tool surface is assumed: a stable id, a timestamp,
+  and <strong>full transcript text</strong>.</p>
+  <ul>
+    <li><strong>Summaries only</strong> — verbatim evidence becomes impossible and claims stop being checkable. Enough to reopen the data model rather than patch around.</li>
+    <li><strong>No speaker segmentation</strong> — attribution stays mostly empty.</li>
+    <li><strong>No folders or tags</strong> — harmless now that everything lands in one folder.</li>
+  </ul>
+  <p>Phase 2 must also confirm that <code>appProperties</code> survives a move and a rename. If it
+  does not, identity needs a different mechanism before more code is written.</p>
 </section>
 
 <footer>
-  Source: docs/specs/2026-08-12-recordings-kb-design.md · decisions D1–D8 in
-  2026-08-12-recordings-kb-decisions.md<br>
-  Status: design complete, awaiting review · implementation blocked on connector authorization
+  Spec: docs/specs/2026-08-12-recordings-kb-design.md (165 lines) · decisions D1–D12<br>
+  Plan: docs/superpowers/plans/2026-08-12-kb-rules-library.md — 5 tasks, 41 tests, all executed before issue
 </footer>
 
 </div>
