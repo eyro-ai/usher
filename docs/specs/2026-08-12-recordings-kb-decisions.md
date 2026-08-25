@@ -236,6 +236,35 @@ Unchanged: the owner-only default landing zone (no ladder needed — "shared wit
 bottom of any lattice), the never-ingest exclusion list (orthogonal to access), and the
 content-hash-keyed claim cache, now scoped per class.
 
+### D11 — Tested rule library under the skills; Drive via the Google API
+*Decided 2026-08-12. Amends D7.*
+
+D7 called for skills and a config file with no code. Two things forced an amendment:
+
+**The Drive MCP connector is conversational, not scriptable.** No test harness can call it, and it
+may not expose `appProperties` (D9's identity mechanism) or `permissions.list` (D10's class
+discovery) at all. Both are ordinary Drive API features but not guaranteed in a simplified
+connector. The Drive layer therefore uses the Google Drive/Sheets API directly.
+
+**The rules most likely to be implemented wrong are pure functions.** Class partitioning, edge
+intersection placement, verbatim-evidence checking, exclusion matching, and alias resolution all
+decide whether the system leaks or lies. As prose inside a skill they cannot be verified and drift
+silently.
+
+Revised shape:
+
+| Layer | Form |
+|---|---|
+| Rules | Python package, pure functions, unit tested. No I/O. |
+| Drive / Sheets | Python client over the Google API. Credentials outside the repo. |
+| Source adapters | Python: Plaud, Linear, GitHub. |
+| Orchestration | Claude skills, as D7 intended — they call the above. |
+
+What survives from D7: skills remain the user-facing surface, and `kb.config.yaml` still holds
+everything deployment-specific (D6). What changes: there is now a build step and a dependency on
+Google API credentials, which contradicts D7's "no secrets" claim. Credential handling is
+deliberately outside the repo and outside config.
+
 ## Open questions
 
 - Packaging — Claude skills, a CLI, or both? What does a user actually install and run?
