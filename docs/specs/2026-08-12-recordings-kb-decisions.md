@@ -49,7 +49,7 @@ Accepted tradeoffs:
 
 All Notion identifiers (parent page, database IDs) come from configuration. None are hardcoded.
 
-### D5 — Access control: tier partitioning with default-deny
+### D5 — Access control: tier partitioning with default-deny — **SUPERSEDED by D12**
 *Proposed 2026-08-07, confirmed 2026-08-12.*
 
 Governing rule: **any artifact inherits the maximum sensitivity of everything it was derived
@@ -198,7 +198,7 @@ Two mechanisms make it work:
   immune to reorganisation within a tier; per-tier scoping means a document moved *between* tiers
   re-distills, which is correct — claims must never pre-exist in a tier before the document arrives.
 
-### D10 — Permission classes discovered from ACLs, replacing the declared tier ladder
+### D10 — Permission classes discovered from ACLs — **SUPERSEDED by D12**
 *Decided 2026-08-12. Supersedes the fixed ladder in D5; refines D9.*
 
 There is no configured personal/group/open ladder. The system walks the configured roots, computes
@@ -264,6 +264,50 @@ What survives from D7: skills remain the user-facing surface, and `kb.config.yam
 everything deployment-specific (D6). What changes: there is now a build step and a dependency on
 Google API credentials, which contradicts D7's "no secrets" claim. Credential handling is
 deliberately outside the repo and outside config.
+
+### D12 — Cut back to the stated purpose: one folder, three sources, no access model
+*Decided 2026-08-12. Supersedes D5 and D10; narrows D8, D9, D11.*
+
+The design had become far larger than the problem. Diagnosis of where it came from:
+
+**The access model generated most of it.** Seven decisions chained off one premise — Plaud has no
+ACL to inherit — and produced tier partitioning, ACL-derived permission classes, intersection edge
+placement, per-class caches, promotion flows, and effective-permission drift detection. That chain
+rested on a question that was never answered: who besides the owner reads this. "Make it generic"
+settled the design *style*, not the requirement.
+
+**Cross-source linking was never asked for.** The Links table, edge provenance, and multi-hop
+traversal came out of a best-practices discussion, not a requirement — and they contradict D2, which
+explicitly chose "searchable memory of recordings" over the traceability option.
+
+What the system is now:
+
+```
+one Drive folder/
+  records/          Docs: transcripts, merged-PR snapshots
+  index             Sheet: Records | Claims
+  .cache            claims by content_hash
+  Entities          optional alias map
+```
+
+Whoever can open the folder can read everything in it. Access is Drive's ordinary folder sharing,
+with no derived concept on top.
+
+**Dropped:** tiers and permission classes · the Links table, edge basis, intersection placement,
+multi-hop · promotion and demotion flows · drift detection and effective-permission checking ·
+per-class scoping of anything · `kb/rules/classes.py` and `kb/rules/edges.py`.
+
+**Kept, because each is cheap and load-bearing:**
+- Verbatim evidence checking — what makes an answer checkable rather than trusted.
+- The never-ingest list — the one safety rule that still matters with a single folder.
+- Derived, rebuildable indexes and identity in `appProperties` (D9) — these made hand-reorganisation
+  free, and they cost almost nothing.
+- Live refetch of mutable records (D2) — the alternative is a KB that reports stale status.
+- Three sources (D3): recordings are the corpus; Linear and GitHub supply context.
+
+**If access boundaries are needed later**, the way back is to reintroduce folders with distinct
+sharing and one index per folder. Nothing here forecloses it — but it is not built until someone
+actually needs it.
 
 ## Open questions
 

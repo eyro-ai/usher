@@ -2,7 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a pure, fully unit-tested Python package holding every decision rule the KB depends on — the logic that decides whether the system leaks, lies, or silently returns nothing.
+**Goal:** Build a pure, fully unit-tested Python package holding every decision rule the KB depends on — the logic that decides whether the system fabricates, leaks, or silently returns nothing.
+
+**Scope note (D12):** the tasks that built `classes.py` and `edges.py` were removed when the access model and the Links table were cut. Five tasks remain.
 
 **Architecture:** `kb/rules/` contains only pure functions: no network, no filesystem, no Google API, no LLM calls. Everything is passed in and returned. This is what makes the leak-prevention rules verifiable, and it is the only phase that can be built before the Plaud and Drive connectors are authorized. Later phases (Drive client, source adapters, ingest, retrieval, skills) call into this package.
 
@@ -552,281 +554,7 @@ git commit -m "feat(rules): distillation contract validation"
 
 ---
 
-### Task 5: Permission class partitioning
-
-**Files:**
-- Create: `kb/rules/classes.py`, `tests/test_classes.py`
-
-**Interfaces:**
-- Consumes: nothing.
-- Produces: `Folder` (frozen dataclass: `id: str`, `path: str`, `acl: frozenset[str]`); `acl_fingerprint(acl: frozenset[str]) -> str`; `partition_by_acl(folders: list[Folder]) -> dict[str, list[Folder]]`; `class_acls(folders: list[Folder]) -> dict[str, frozenset[str]]`
-
-- [ ] **Step 1: Write the failing test**
-
-Create `tests/test_classes.py`:
-
-```python
-from kb.rules.classes import Folder, acl_fingerprint, class_acls, partition_by_acl
-
-ENG = frozenset({"ana@x.com", "bo@x.com"})
-BD = frozenset({"cy@x.com"})
-ALL = frozenset({"ana@x.com", "bo@x.com", "cy@x.com"})
-
-
-def test_same_acl_yields_same_fingerprint_regardless_of_order():
-    a = acl_fingerprint(frozenset({"ana@x.com", "bo@x.com"}))
-    b = acl_fingerprint(frozenset({"bo@x.com", "ana@x.com"}))
-    assert a == b
-
-
-def test_different_acls_yield_different_fingerprints():
-    assert acl_fingerprint(ENG) != acl_fingerprint(BD)
-
-
-def test_fingerprint_is_prefixed_for_readability():
-    assert acl_fingerprint(ENG).startswith("c_")
-
-
-def test_folders_sharing_an_acl_collapse_into_one_class():
-    folders = [
-        Folder("f1", "/eng/notes", ENG),
-        Folder("f2", "/eng/archive", ENG),
-    ]
-    partition = partition_by_acl(folders)
-    assert len(partition) == 1
-    assert len(next(iter(partition.values()))) == 2
-
-
-def test_distinct_acls_produce_distinct_classes():
-    folders = [
-        Folder("f1", "/eng", ENG),
-        Folder("f2", "/bd", BD),
-        Folder("f3", "/all", ALL),
-    ]
-    assert len(partition_by_acl(folders)) == 3
-
-
-def test_one_extra_share_creates_its_own_class():
-    """Ad-hoc sharing multiplies classes — the cost recorded in D10."""
-    folders = [
-        Folder("f1", "/eng", ENG),
-        Folder("f2", "/eng/odd", ENG | {"guest@x.com"}),
-    ]
-    assert len(partition_by_acl(folders)) == 2
-
-
-def test_class_acls_maps_id_to_audience():
-    folders = [Folder("f1", "/eng", ENG), Folder("f2", "/bd", BD)]
-    mapping = class_acls(folders)
-    assert mapping[acl_fingerprint(ENG)] == ENG
-    assert mapping[acl_fingerprint(BD)] == BD
-
-
-def test_empty_input_yields_empty_partition():
-    assert partition_by_acl([]) == {}
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `python3 -m pytest tests/test_classes.py -v`
-Expected: FAIL — `ModuleNotFoundError: No module named 'kb.rules.classes'`
-
-- [ ] **Step 3: Write minimal implementation**
-
-Create `kb/rules/classes.py`:
-
-```python
-"""Permission classes discovered from effective ACLs (spec 1.1, D10).
-
-A class is the set of folders sharing one audience. Classes are discovered by
-scanning, never declared — so a stored label cannot disagree with reality.
-"""
-
-import hashlib
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class Folder:
-    id: str
-    path: str
-    acl: frozenset[str]
-
-
-def acl_fingerprint(acl: frozenset[str]) -> str:
-    """Stable id for an audience. Sorted before hashing so set order is irrelevant."""
-    joined = "\n".join(sorted(acl))
-    return "c_" + hashlib.sha256(joined.encode("utf-8")).hexdigest()[:8]
-
-
-def partition_by_acl(folders: list[Folder]) -> dict[str, list[Folder]]:
-    """Group folders into classes. One index will be built per returned key."""
-    partition: dict[str, list[Folder]] = {}
-    for folder in folders:
-        partition.setdefault(acl_fingerprint(folder.acl), []).append(folder)
-    return partition
-
-
-def class_acls(folders: list[Folder]) -> dict[str, frozenset[str]]:
-    """Class id -> the audience it represents. Needed for edge placement."""
-    return {acl_fingerprint(f.acl): f.acl for f in folders}
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `python3 -m pytest tests/test_classes.py -v`
-Expected: PASS — 8 passed
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add kb/rules/classes.py tests/test_classes.py
-git commit -m "feat(rules): permission class partitioning from effective ACLs"
-```
-
----
-
-### Task 6: Edge placement by audience intersection
-
-**Files:**
-- Create: `kb/rules/edges.py`, `tests/test_edges.py`
-
-**Interfaces:**
-- Consumes: `kb.rules.classes.acl_fingerprint`
-- Produces: `edge_class(acl_a: frozenset[str], acl_b: frozenset[str], class_acls: dict[str, frozenset[str]]) -> str | None`
-
-- [ ] **Step 1: Write the failing test**
-
-Create `tests/test_edges.py`:
-
-```python
-from kb.rules.classes import acl_fingerprint
-from kb.rules.edges import edge_class
-
-ANA = "ana@x.com"
-BO = "bo@x.com"
-CY = "cy@x.com"
-
-ENG = frozenset({ANA, BO})
-BD = frozenset({CY})
-ALL = frozenset({ANA, BO, CY})
-ANA_ONLY = frozenset({ANA})
-
-CLASSES = {
-    acl_fingerprint(ENG): ENG,
-    acl_fingerprint(BD): BD,
-    acl_fingerprint(ALL): ALL,
-    acl_fingerprint(ANA_ONLY): ANA_ONLY,
-}
-
-
-def test_edge_between_identical_audiences_lands_in_that_class():
-    assert edge_class(ENG, ENG, CLASSES) == acl_fingerprint(ENG)
-
-
-def test_edge_between_nested_audiences_lands_in_the_narrower_one():
-    # Everyone who can see the ENG record can also see the ALL record.
-    assert edge_class(ALL, ENG, CLASSES) == acl_fingerprint(ENG)
-
-
-def test_incomparable_audiences_with_no_overlap_produce_no_edge():
-    """Neither team is stricter; nobody can see both ends, so the edge exists
-    nowhere (D10). Materializing it anywhere would leak existence."""
-    assert edge_class(ENG, BD, CLASSES) is None
-
-
-def test_partial_overlap_lands_in_the_overlap_class():
-    assert edge_class(ENG, ANA_ONLY, CLASSES) == acl_fingerprint(ANA_ONLY)
-
-
-def test_overlap_with_no_matching_class_produces_no_edge():
-    overlap_only = frozenset({BO})  # intersection is {BO}, no class equals it
-    classes = {acl_fingerprint(ENG): ENG, acl_fingerprint(ALL): ALL}
-    assert edge_class(frozenset({BO, CY}), ENG, classes) is None
-
-
-def test_empty_audience_produces_no_edge():
-    assert edge_class(frozenset(), ENG, CLASSES) is None
-
-
-def test_result_is_always_a_subset_of_both_endpoints():
-    result = edge_class(ALL, ENG, CLASSES)
-    assert CLASSES[result] <= ALL
-    assert CLASSES[result] <= ENG
-
-
-def test_class_with_empty_audience_is_never_selected():
-    """An empty audience is a subset of every intersection. If it is not filtered
-    out it wins whenever no real class fits, materializing the edge into a class
-    that represents nobody."""
-    classes = {
-        acl_fingerprint(ENG): ENG,
-        acl_fingerprint(frozenset()): frozenset(),
-    }
-    # Intersection is {BO}; no class equals it, so the answer must be None.
-    assert edge_class(frozenset({BO, CY}), ENG, classes) is None
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `python3 -m pytest tests/test_edges.py -v`
-Expected: FAIL — `ModuleNotFoundError: No module named 'kb.rules.edges'`
-
-- [ ] **Step 3: Write minimal implementation**
-
-Create `kb/rules/edges.py`:
-
-```python
-"""Edge placement (spec 1.4, D10).
-
-An edge is materialized only where both of its endpoints are visible. Under the
-old declared ladder this was "store at the more restricted endpoint", which
-assumed a total order; discovered classes form only a partial order, so the rule
-is an intersection.
-"""
-
-
-def edge_class(
-    acl_a: frozenset[str],
-    acl_b: frozenset[str],
-    class_acls: dict[str, frozenset[str]],
-) -> str | None:
-    """Return the class an edge belongs in, or None if it belongs nowhere.
-
-    Chooses the widest class whose audience can see both endpoints, so the edge
-    reaches as many entitled readers as possible without reaching anyone else.
-    """
-    visible_to_both = acl_a & acl_b
-    if not visible_to_both:
-        return None
-
-    candidates = [
-        (class_id, acl)
-        for class_id, acl in class_acls.items()
-        if acl and acl <= visible_to_both
-    ]
-    if not candidates:
-        return None
-
-    # Widest first; class_id breaks ties so the result is deterministic.
-    return max(candidates, key=lambda pair: (len(pair[1]), pair[0]))[0]
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `python3 -m pytest tests/test_edges.py -v`
-Expected: PASS — 8 passed
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add kb/rules/edges.py tests/test_edges.py
-git commit -m "feat(rules): edge placement by audience intersection"
-```
-
----
-
-### Task 7: Identity resolution before filtering
+### Task 5: Identity resolution before filtering
 
 **Files:**
 - Create: `kb/rules/identity.py`, `tests/test_identity.py`
@@ -953,7 +681,7 @@ Expected: PASS — 8 passed
 - [ ] **Step 5: Run the whole suite and commit**
 
 Run: `python3 -m pytest -v`
-Expected: PASS — 57 passed
+Expected: PASS — 41 passed
 
 ```bash
 git add kb/rules/identity.py tests/test_identity.py
@@ -965,22 +693,15 @@ git commit -m "feat(rules): identity resolution before filtering"
 ## Verification status
 
 Every code block in this plan was extracted and executed before the plan was
-issued: **57 tests pass** against the implementations exactly as written here.
+issued: **41 tests pass** against the implementations exactly as written here.
 
-The suite was also mutation-tested on the three leak-critical rules. Two
-mutations were caught immediately (a skip log that names the excluded item; an
-evidence check that accepts paraphrase). A third — removing the `acl and` guard
-in `edge_class` — initially **survived**, because the two guards in that function
-mask each other. `test_class_with_empty_audience_is_never_selected` was added to
-close that gap and now fails when the guard is removed.
-
-Note for the implementer: the `if not visible_to_both: return None` early exit in
-`edge_class` is defence-in-depth, not load-bearing — the candidate filter already
-handles empty intersections. Keep it for clarity; do not rely on it alone.
+The suite was mutation-tested on the two rules that matter most. Both mutations
+died: a skip log that names the excluded item, and an evidence check that accepts
+paraphrase. (A third mutation test covered `edge_class`, which D12 removed.)
 
 ## Phase 1 exit criteria
 
-- `python3 -m pytest` passes with 57 tests.
+- `python3 -m pytest` passes with 41 tests.
 - No module in `kb/rules/` imports anything beyond the standard library.
 - Every rule from spec §1.4, §2.2, §2.4, §2.5, §2.6, §3.8 and D10 has a test that would fail if the rule were removed.
 
@@ -988,9 +709,9 @@ handles empty intersections. Keep it for clarity; do not rely on it alone.
 
 | Phase | Builds | Blocked on |
 |---|---|---|
-| 2 | Drive/Sheets client: folder walk, `permissions.list`, `appProperties` read/write, Sheet CRUD | Google API credentials |
+| 2 | Drive/Sheets client: folder walk, `appProperties` read/write, Sheet CRUD | Google API credentials |
 | 3 | Source adapters: Plaud, Linear, GitHub | Plaud connector authorization |
-| 4 | Ingest pipeline and reconcile/rebuild, wiring phases 1–3 together | Phases 2, 3 |
-| 5 | Retrieval and the three Claude skills | Phase 4 |
+| 4 | Ingest and rebuild, wiring phases 1–3 together | Phases 2, 3 |
+| 5 | Retrieval and the Claude skills | Phase 4 |
 
-Phase 2's first task must be a spike that verifies `appProperties` and `permissions.list` behave as D9 and D10 assume. If they do not, those decisions need reopening before any more code is written.
+Phase 2's first task must be a spike verifying that `appProperties` survives a move and a rename as D9 assumes. If it does not, identity needs another mechanism before more code is written.
