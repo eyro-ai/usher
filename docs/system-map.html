@@ -1,0 +1,575 @@
+<title>Recordings KB — System Map</title>
+<style>
+  :root{
+    --paper:#F2F4F6; --surface:#FFFFFF; --ink:#14181D; --body:#333B45;
+    --muted:#6B7683; --rule:#DCE1E6; --rule-strong:#C3CBD3; --accent:#1F5C8C;
+    --explicit:#2C6B54; --temporal:#856618; --inferred:#8C4550;
+    --warn-bg:#FBF6EC; --warn-edge:#D9C79A; --zone:#EEF1F4;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --measure:66ch;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--paper:#0E1216;--surface:#161B21;--ink:#E8ECF0;--body:#B6C0CA;--muted:#7E8A96;
+      --rule:#242C34;--rule-strong:#39434D;--accent:#72AEDC;--explicit:#5FBF97;
+      --temporal:#D4A73C;--inferred:#DE8B95;--warn-bg:#1D1B14;--warn-edge:#4A4128;--zone:#12171C;}
+  }
+  :root[data-theme="dark"]{--paper:#0E1216;--surface:#161B21;--ink:#E8ECF0;--body:#B6C0CA;
+    --muted:#7E8A96;--rule:#242C34;--rule-strong:#39434D;--accent:#72AEDC;--explicit:#5FBF97;
+    --temporal:#D4A73C;--inferred:#DE8B95;--warn-bg:#1D1B14;--warn-edge:#4A4128;--zone:#12171C;}
+  :root[data-theme="light"]{--paper:#F2F4F6;--surface:#FFFFFF;--ink:#14181D;--body:#333B45;
+    --muted:#6B7683;--rule:#DCE1E6;--rule-strong:#C3CBD3;--accent:#1F5C8C;--explicit:#2C6B54;
+    --temporal:#856618;--inferred:#8C4550;--warn-bg:#FBF6EC;--warn-edge:#D9C79A;--zone:#EEF1F4;}
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--body);font-family:var(--serif);
+    font-size:17px;line-height:1.62;margin:0;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px 96px}
+  .mast{padding:64px 0 30px;border-bottom:1px solid var(--rule-strong)}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 18px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,44px);line-height:1.14;
+    color:var(--ink);margin:0 0 16px;letter-spacing:-.015em;text-wrap:balance}
+  .thesis{font-size:19px;max-width:var(--measure);margin:0}
+  section{padding:42px 0;border-bottom:1px solid var(--rule)}
+  .shead{display:grid;grid-template-columns:74px 1fr;gap:16px;align-items:baseline;margin:0 0 20px}
+  .snum{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--accent);
+    text-transform:uppercase;padding-top:6px}
+  h2{font-family:var(--serif);font-weight:600;font-size:25px;line-height:1.2;color:var(--ink);
+    margin:0;letter-spacing:-.01em;text-wrap:balance}
+  h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink);margin:32px 0 12px;font-weight:600}
+  p{margin:0 0 15px;max-width:var(--measure)}
+  strong{color:var(--ink);font-weight:600}
+  code{font-family:var(--mono);font-size:.85em;background:var(--surface);border:1px solid var(--rule);
+    border-radius:2px;padding:1px 5px;color:var(--ink)}
+  a{color:var(--accent)}
+
+  figure{margin:0 0 26px}
+  .dia{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);padding:20px}
+  .dia svg{display:block;width:100%;height:auto}
+  figcaption{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6;
+    margin-top:10px;max-width:var(--measure)}
+
+  .tscroll{overflow-x:auto;margin:0 0 16px;border:1px solid var(--rule);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:13px;
+    font-variant-numeric:tabular-nums}
+  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;padding:10px 13px;border-bottom:1px solid var(--rule-strong);
+    white-space:nowrap;vertical-align:bottom}
+  td{padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:0}
+  td.k{font-family:var(--mono);font-size:11.5px;color:var(--ink);white-space:nowrap}
+  td.f{font-family:var(--mono);font-size:11.5px;color:var(--accent);font-weight:600;white-space:nowrap}
+  .zoneA{color:var(--explicit)} .zoneB{color:var(--accent)} .zoneC{color:var(--temporal)}
+  .note{background:var(--warn-bg);border:1px solid var(--warn-edge);padding:15px 17px;margin:18px 0;
+    max-width:var(--measure)}
+  .note .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);display:block;margin-bottom:6px}
+  .note p{font-size:15.5px;margin:0}
+  ul{margin:0 0 15px;padding-left:20px;max-width:var(--measure)}
+  li{margin-bottom:6px}
+  li::marker{color:var(--muted)}
+  footer{padding:34px 0 0;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.7}
+  @media (max-width:640px){.shead{grid-template-columns:1fr;gap:4px}.snum{padding-top:0}body{font-size:16px}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">System map · companion to the architecture</p>
+  <h1>Every moving part</h1>
+  <p class="thesis">Where each component lives, what it may call, and every path data takes through
+  the system — including the one path that goes around it entirely.</p>
+</header>
+
+<section>
+  <div class="shead"><span class="snum">Zones</span><h2>Where things live</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 980 700" role="img" aria-label="Four zones: the person, your machine running skills and the kb package, Google Workspace holding class folders and the index, and external services. The person writes directly to Drive, bypassing all tooling.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+
+          <!-- person -->
+          <rect x="8" y="14" width="200" height="46" fill="var(--surface)" stroke="var(--inferred)" stroke-width="1.5"/>
+          <text x="20" y="34" font-size="12" fill="var(--ink)">Person</text>
+          <text x="20" y="50" font-size="9.5" fill="var(--muted)">asks questions · moves files</text>
+
+          <!-- zone A -->
+          <rect x="8" y="80" width="300" height="600" fill="var(--zone)" stroke="var(--rule-strong)"/>
+          <text x="20" y="100" font-size="10" letter-spacing="1.4" fill="var(--explicit)">A · YOUR MACHINE</text>
+
+          <rect x="22" y="112" width="272" height="58" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="34" y="130" font-size="11" fill="var(--ink)">Claude Code session — 3 skills</text>
+          <text x="34" y="146" font-size="9.5" fill="var(--muted)">recordings-kb-add · -search</text>
+          <text x="34" y="160" font-size="9.5" fill="var(--muted)">recordings-kb-reconcile</text>
+
+          <rect x="22" y="186" width="272" height="322" fill="none" stroke="var(--accent)" stroke-dasharray="3 3"/>
+          <text x="34" y="203" font-size="10" letter-spacing="1.2" fill="var(--accent)">kb/ PYTHON PACKAGE</text>
+
+          <rect x="34" y="212" width="248" height="104" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="44" y="229" font-size="10.5" fill="var(--ink)">kb/rules/ — pure, unit tested</text>
+          <text x="44" y="245" font-size="9.5" fill="var(--muted)">records · exclusion · evidence</text>
+          <text x="44" y="259" font-size="9.5" fill="var(--muted)">claims · classes · edges · identity</text>
+          <text x="44" y="277" font-size="9" fill="var(--explicit)">no I/O — no network, no disk</text>
+          <text x="44" y="294" font-size="9" fill="var(--muted)">57 tests · phase 1</text>
+          <text x="44" y="309" font-size="9" fill="var(--muted)">every leak rule lives here</text>
+
+          <rect x="34" y="326" width="248" height="62" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="44" y="343" font-size="10.5" fill="var(--ink)">kb/drive/</text>
+          <text x="44" y="358" font-size="9.5" fill="var(--muted)">client · sheets · acl · props</text>
+          <text x="44" y="373" font-size="9" fill="var(--muted)">permissions.list · appProperties</text>
+
+          <rect x="34" y="398" width="248" height="46" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="44" y="415" font-size="10.5" fill="var(--ink)">kb/sources/</text>
+          <text x="44" y="430" font-size="9.5" fill="var(--muted)">plaud · linear · github</text>
+
+          <rect x="34" y="454" width="248" height="46" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="44" y="471" font-size="10.5" fill="var(--ink)">kb/pipeline/</text>
+          <text x="44" y="486" font-size="9.5" fill="var(--muted)">ingest · reconcile · distill · retrieve</text>
+
+          <rect x="22" y="522" width="272" height="34" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="34" y="543" font-size="10.5" fill="var(--ink)">kb.config.yaml — roots, rules, glossary</text>
+          <rect x="22" y="566" width="272" height="34" fill="var(--surface)" stroke="var(--inferred)"/>
+          <text x="34" y="587" font-size="10.5" fill="var(--inferred)">credentials — outside the repo</text>
+          <rect x="22" y="610" width="272" height="34" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="34" y="631" font-size="10.5" fill="var(--ink)">state/watermarks.json</text>
+          <text x="34" y="660" font-size="9" fill="var(--muted)">optimization only — never correctness</text>
+
+          <!-- zone B -->
+          <rect x="336" y="80" width="316" height="600" fill="var(--zone)" stroke="var(--rule-strong)"/>
+          <text x="348" y="100" font-size="10" letter-spacing="1.4" fill="var(--accent)">B · GOOGLE WORKSPACE</text>
+
+          <rect x="350" y="112" width="288" height="250" fill="none" stroke="var(--accent)" stroke-dasharray="3 3"/>
+          <text x="362" y="130" font-size="10" letter-spacing="1.1" fill="var(--accent)">CLASS ROOT × N — DISCOVERED</text>
+          <text x="362" y="145" font-size="9" fill="var(--muted)">one per distinct effective ACL</text>
+
+          <rect x="362" y="155" width="264" height="56" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="372" y="173" font-size="10.5" fill="var(--ink)">records/ — Google Docs</text>
+          <text x="372" y="188" font-size="9.5" fill="var(--muted)">raw transcripts, merged-PR snapshots</text>
+          <text x="372" y="203" font-size="9" fill="var(--explicit)">identity in appProperties</text>
+
+          <rect x="362" y="221" width="264" height="72" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="372" y="239" font-size="10.5" fill="var(--ink)">index — one Sheet</text>
+          <text x="372" y="255" font-size="9.5" fill="var(--muted)">tabs: Records | Claims | Links</text>
+          <text x="372" y="271" font-size="9" fill="var(--temporal)">derived — safe to delete</text>
+          <text x="372" y="286" font-size="9" fill="var(--muted)">ACL inherited from this folder</text>
+
+          <rect x="362" y="303" width="264" height="46" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="372" y="321" font-size="10.5" fill="var(--ink)">.cache — claims by content_hash</text>
+          <text x="372" y="337" font-size="9" fill="var(--muted)">scoped per class, so a cross-class move re-distills</text>
+
+          <rect x="350" y="382" width="288" height="42" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="362" y="400" font-size="10.5" fill="var(--ink)">Entities Sheet — identity map</text>
+          <text x="362" y="415" font-size="9" fill="var(--muted)">single copy, in the widest class</text>
+
+          <rect x="350" y="440" width="288" height="42" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="362" y="458" font-size="10.5" fill="var(--ink)">promotions log</text>
+          <text x="362" y="473" font-size="9" fill="var(--muted)">written to the destination class</text>
+
+          <rect x="350" y="510" width="288" height="44" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5"/>
+          <text x="362" y="529" font-size="10.5" fill="var(--ink)">Drive + Sheets API</text>
+          <text x="362" y="545" font-size="9" fill="var(--muted)">the only way code reaches zone B</text>
+
+          <rect x="350" y="572" width="288" height="44" fill="var(--surface)" stroke="var(--inferred)" stroke-width="1.5"/>
+          <text x="362" y="591" font-size="10.5" fill="var(--inferred)">Drive web UI</text>
+          <text x="362" y="607" font-size="9" fill="var(--muted)">the person's own hands — no code involved</text>
+
+          <!-- zone C -->
+          <rect x="680" y="80" width="292" height="600" fill="var(--zone)" stroke="var(--rule-strong)"/>
+          <text x="692" y="100" font-size="10" letter-spacing="1.4" fill="var(--temporal)">C · EXTERNAL SERVICES</text>
+
+          <rect x="694" y="115" width="264" height="52" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="704" y="134" font-size="10.5" fill="var(--ink)">Plaud cloud</text>
+          <text x="704" y="150" font-size="9" fill="var(--muted)">recordings + transcripts · the corpus</text>
+          <text x="704" y="163" font-size="9" fill="var(--inferred)">unauthorized — surface unverified</text>
+
+          <rect x="694" y="183" width="264" height="46" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="704" y="201" font-size="10.5" fill="var(--ink)">Linear API</text>
+          <text x="704" y="217" font-size="9" fill="var(--muted)">issues, projects — always refetched</text>
+
+          <rect x="694" y="245" width="264" height="46" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="704" y="263" font-size="10.5" fill="var(--ink)">GitHub API — gh</text>
+          <text x="704" y="279" font-size="9" fill="var(--muted)">pull requests · merged ones snapshot</text>
+
+          <rect x="694" y="320" width="264" height="52" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="704" y="339" font-size="10.5" fill="var(--ink)">Anthropic API</text>
+          <text x="704" y="355" font-size="9" fill="var(--muted)">distillation + answer synthesis</text>
+          <text x="704" y="368" font-size="9" fill="var(--temporal)">raw text leaves the workspace here</text>
+
+          <!-- boundaries -->
+          <line x1="322" y1="80" x2="322" y2="680" stroke="var(--muted)" stroke-dasharray="2 5"/>
+          <line x1="666" y1="80" x2="666" y2="680" stroke="var(--muted)" stroke-dasharray="2 5"/>
+
+          <!-- arrows -->
+          <g color="var(--rule-strong)" stroke="var(--rule-strong)" fill="none" marker-end="url(#a1)">
+            <path d="M108,60 L108,112"/>
+            <path d="M294,441 L694,270" stroke-dasharray="4 3"/>
+            <path d="M294,425 L694,206" stroke-dasharray="4 3"/>
+            <path d="M294,410 L694,141" stroke-dasharray="4 3"/>
+            <path d="M294,477 L694,346" stroke-dasharray="4 3"/>
+            <path d="M294,357 L350,532"/>
+            <path d="M350,532 L638,532" stroke="none"/>
+          </g>
+          <g color="var(--accent)" stroke="var(--accent)" fill="none" marker-end="url(#a1)" stroke-width="1.3">
+            <path d="M494,510 L494,362"/>
+          </g>
+          <g color="var(--inferred)" stroke="var(--inferred)" fill="none" marker-end="url(#a1)" stroke-width="1.6">
+            <path d="M208,37 L760,37 L760,572"/>
+            <path d="M494,572 L494,478"/>
+          </g>
+          <text x="300" y="30" font-size="9.5" fill="var(--inferred)">moves files by hand — bypasses every check (D9)</text>
+          <text x="120" y="105" font-size="9" fill="var(--muted)">asks</text>
+          <text x="300" y="352" font-size="9" fill="var(--muted)">authenticated calls</text>
+          <text x="500" y="500" font-size="9" fill="var(--accent)">reads + writes</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Four zones. Everything the system controls sits in A and reaches B only through the
+    Drive API. The red path is the one it does not control: the person acting directly in the Drive
+    UI, which is how tier changes actually happen and why every safety check is detective rather
+    than preventive.</figcaption>
+  </figure>
+
+  <div class="note"><span class="lbl">The single most important edge in this diagram</span>
+    <p>The red arrow from <strong>Person</strong> to <strong>Drive web UI</strong> touches no
+    component in zone A. No skill runs, no rule is evaluated, no log is written. The system finds out
+    at the next reconcile. Every other design choice — derived indexes, identity in
+    <code>appProperties</code>, effective-permission checking — exists to stay correct across that
+    arrow.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">Parts</span><h2>Complete component inventory</h2></div>
+  <p>Every module, file, and remote surface. "Calls" lists only what a component is permitted to
+  reach — anything absent is a boundary violation.</p>
+
+  <h3>Zone A — your machine</h3>
+  <div class="tscroll"><table>
+    <thead><tr><th>Component</th><th>Responsibility</th><th>Calls</th></tr></thead>
+    <tbody>
+      <tr><td class="k">recordings-kb-add</td><td>Skill. Conversational entry to ingest.</td><td class="k">kb/pipeline/ingest</td></tr>
+      <tr><td class="k">recordings-kb-search</td><td>Skill. Question in, cited answer out.</td><td class="k">kb/pipeline/retrieve</td></tr>
+      <tr><td class="k">recordings-kb-reconcile</td><td>Skill. Rebuild, drift report, promote helper.</td><td class="k">kb/pipeline/reconcile</td></tr>
+      <tr><td class="k">rules/records</td><td><code>record_id</code>, <code>content_hash</code>, <code>needs_reextraction</code></td><td>—</td></tr>
+      <tr><td class="k">rules/exclusion</td><td><code>matches_exclusion</code>, <code>skip_log_line</code> — the log that cannot describe what it skipped</td><td>—</td></tr>
+      <tr><td class="k">rules/evidence</td><td><code>normalize</code>, <code>is_verbatim</code> — the anti-fabrication check</td><td>—</td></tr>
+      <tr><td class="k">rules/claims</td><td><code>validate_claims</code> — contract enforcement, reject never repair</td><td class="k">rules/evidence</td></tr>
+      <tr><td class="k">rules/classes</td><td><code>acl_fingerprint</code>, <code>partition_by_acl</code>, <code>class_acls</code></td><td>—</td></tr>
+      <tr><td class="k">rules/edges</td><td><code>edge_class</code> — audience intersection placement</td><td class="k">rules/classes</td></tr>
+      <tr><td class="k">rules/identity</td><td><code>build_alias_index</code>, <code>resolve</code>, <code>resolve_all</code></td><td>—</td></tr>
+      <tr><td class="k">drive/client</td><td>Auth, folder walk, file move, trash</td><td class="zoneB">Drive API</td></tr>
+      <tr><td class="k">drive/acl</td><td><code>permissions.list</code>, effective-ACL computation, direct-share detection</td><td class="zoneB">Drive API</td></tr>
+      <tr><td class="k">drive/props</td><td>Read/write <code>appProperties</code> — identity that survives rename and move</td><td class="zoneB">Drive API</td></tr>
+      <tr><td class="k">drive/sheets</td><td>Index tab read/write, wholesale rewrite on rebuild</td><td class="zoneB">Sheets API</td></tr>
+      <tr><td class="k">sources/plaud</td><td>List recordings, fetch transcript + metadata</td><td class="zoneC">Plaud</td></tr>
+      <tr><td class="k">sources/linear</td><td>Issues and projects. Never cached.</td><td class="zoneC">Linear</td></tr>
+      <tr><td class="k">sources/github</td><td>PRs; merged ones snapshotted, open ones linked</td><td class="zoneC">gh</td></tr>
+      <tr><td class="k">pipeline/ingest</td><td>Orchestrates F1–F3</td><td class="k">rules, drive, sources, distill</td></tr>
+      <tr><td class="k">pipeline/distill</td><td>Prompt, parse, hand output to <code>validate_claims</code></td><td class="zoneC">Anthropic</td></tr>
+      <tr><td class="k">pipeline/reconcile</td><td>Orchestrates F4 — rebuild and drift</td><td class="k">rules, drive</td></tr>
+      <tr><td class="k">pipeline/retrieve</td><td>Orchestrates F5 — the funnel</td><td class="k">rules, drive, sources</td></tr>
+      <tr><td class="k">kb.config.yaml</td><td>Roots, exclusion patterns, glossary, budgets. No secrets.</td><td>—</td></tr>
+      <tr><td class="k">credentials</td><td>Google API. Outside the repo, outside config.</td><td>—</td></tr>
+      <tr><td class="k">state/watermarks.json</td><td>Last-fetched marker per source. Optimization only.</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Zone B — Google Workspace</h3>
+  <div class="tscroll"><table>
+    <thead><tr><th>Artifact</th><th>Holds</th><th>Derived?</th></tr></thead>
+    <tbody>
+      <tr><td class="k">class root/ × N</td><td>One folder per distinct effective ACL. Discovered, never declared.</td><td>no — the source of truth for access</td></tr>
+      <tr><td class="k">records/*.gdoc</td><td>Raw transcripts and merged-PR snapshots. Identity in <code>appProperties</code>.</td><td>no — the corpus</td></tr>
+      <tr><td class="k">index → Records</td><td>One row per source event</td><td><strong>yes — deletable</strong></td></tr>
+      <tr><td class="k">index → Claims</td><td>Distilled statements with verbatim evidence</td><td><strong>yes — deletable</strong></td></tr>
+      <tr><td class="k">index → Links</td><td>Cross-source edges with <code>basis</code></td><td><strong>yes — deletable</strong></td></tr>
+      <tr><td class="k">.cache</td><td>Claims keyed by <code>content_hash</code>, per class</td><td>yes — losing it costs LLM spend, not data</td></tr>
+      <tr><td class="k">Entities</td><td>The identity map: speaker ↔ Linear user ↔ GitHub handle</td><td>no — hand-maintained, seeded once</td></tr>
+      <tr><td class="k">promotions log</td><td>Append-only record of class changes, in the destination</td><td>no</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Zone C — external</h3>
+  <div class="tscroll"><table>
+    <thead><tr><th>Service</th><th>Read</th><th>Written back?</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Plaud</td><td>Recordings, transcripts, folders/tags</td><td>never</td></tr>
+      <tr><td class="k">Linear</td><td>Issues, projects, status — live on every answer</td><td>never (D2)</td></tr>
+      <tr><td class="k">GitHub</td><td>PRs, titles, bodies, review threads</td><td>never</td></tr>
+      <tr><td class="k">Anthropic</td><td>—</td><td>receives raw text for distillation</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">F1–F3</span><h2>Ingest: a recording becomes rows</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 960 340" role="img" aria-label="Ingest flow from source adapter through the exclusion gate, landing folder resolution, document write, distillation and evidence validation, to index rows and watermark advance, with two drop-off paths.">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">
+          <g fill="var(--surface)" stroke="var(--rule-strong)">
+            <rect x="8" y="80" width="104" height="52"/>
+            <rect x="150" y="80" width="112" height="52"/>
+            <rect x="300" y="80" width="112" height="52"/>
+            <rect x="450" y="80" width="112" height="52"/>
+            <rect x="600" y="80" width="112" height="52"/>
+            <rect x="750" y="80" width="112" height="52"/>
+            <rect x="600" y="200" width="112" height="52"/>
+            <rect x="750" y="200" width="112" height="52"/>
+            <rect x="450" y="200" width="112" height="52"/>
+          </g>
+          <g fill="var(--ink)">
+            <text x="20" y="102">source</text><text x="20" y="116">adapter</text>
+            <text x="162" y="102">exclusion</text><text x="162" y="116">gate</text>
+            <text x="312" y="102">landing</text><text x="312" y="116">folder</text>
+            <text x="462" y="102">write Doc</text><text x="462" y="116">+ stamp</text>
+            <text x="612" y="102">Records</text><text x="612" y="116">row</text>
+            <text x="762" y="102">distill</text><text x="762" y="116">(LLM)</text>
+            <text x="762" y="222">validate</text><text x="762" y="236">evidence</text>
+            <text x="612" y="222">Claims</text><text x="612" y="236">rows</text>
+            <text x="462" y="222">Links</text><text x="462" y="236">rows</text>
+          </g>
+          <g fill="var(--muted)" font-size="8.5">
+            <text x="20" y="129">F1</text><text x="162" y="129">before fetch</text>
+            <text x="312" y="129">default deny</text><text x="462" y="129">target folder only</text>
+            <text x="612" y="129">appProperties</text><text x="762" y="129">F2</text>
+            <text x="762" y="249">verbatim or drop</text><text x="612" y="249">cache by hash</text>
+            <text x="462" y="249">F3 · intersection</text>
+          </g>
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#a2)">
+            <path d="M112,106 L146,106"/><path d="M262,106 L296,106"/><path d="M412,106 L446,106"/>
+            <path d="M562,106 L596,106"/><path d="M712,106 L746,106"/>
+            <path d="M806,132 L806,196"/><path d="M750,226 L716,226"/><path d="M600,226 L566,226"/>
+            <path d="M450,226 L320,226 L320,290"/>
+          </g>
+          <rect x="240" y="290" width="180" height="40" fill="var(--surface)" stroke="var(--explicit)"/>
+          <text x="252" y="308" fill="var(--explicit)" font-size="10">validate + advance watermark</text>
+          <text x="252" y="323" fill="var(--muted)" font-size="8.5">only after the record fully commits</text>
+
+          <g stroke="var(--inferred)" color="var(--inferred)" fill="none" marker-end="url(#a2)" stroke-dasharray="4 3">
+            <path d="M206,132 L206,180"/><path d="M806,254 L890,254 L890,290"/>
+          </g>
+          <rect x="130" y="182" width="160" height="40" fill="var(--surface)" stroke="var(--inferred)"/>
+          <text x="142" y="199" fill="var(--inferred)" font-size="9.5">skipped — rule + count</text>
+          <text x="142" y="213" fill="var(--muted)" font-size="8.5">never the title</text>
+          <rect x="810" y="292" width="142" height="40" fill="var(--surface)" stroke="var(--inferred)"/>
+          <text x="820" y="309" fill="var(--inferred)" font-size="9.5">claim discarded</text>
+          <text x="820" y="323" fill="var(--muted)" font-size="8.5">never repaired</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>F1 ingest, F2 distillation, F3 edge detection. The two dashed exits are the rules
+    that matter most: excluded items leave without being described, and claims whose evidence is not
+    verbatim are dropped rather than fixed up.</figcaption>
+  </figure>
+
+  <div class="tscroll"><table>
+    <thead><tr><th>Flow</th><th>Trigger</th><th>Path</th><th>Writes</th></tr></thead>
+    <tbody>
+      <tr><td class="f">F1</td><td>Skill invoked, or scheduled</td><td>source → exclusion → landing folder → Doc + <code>appProperties</code></td><td>Doc in <code>records/</code>, Records row</td></tr>
+      <tr><td class="f">F2</td><td>New or changed <code>content_hash</code></td><td>Doc text → Anthropic → parse → <code>validate_claims</code></td><td>Claims rows, <code>.cache</code> entry</td></tr>
+      <tr><td class="f">F3</td><td>After records land</td><td>ID scan + time proximity → <code>edge_class</code></td><td>Links rows, in the intersection class only</td></tr>
+      <tr><td class="f">F4</td><td>Reconcile; every run</td><td>folder walk → <code>permissions.list</code> → partition → rebuild</td><td>Whole index, rewritten</td></tr>
+      <tr><td class="f">F5</td><td>A question</td><td>resolve entities → filter → lexical → rerank → refetch mutable</td><td>Nothing. Read-only.</td></tr>
+      <tr><td class="f">F6</td><td>Person drags a file in Drive</td><td><strong>No system involvement whatsoever</strong></td><td>Nothing until F4 notices</td></tr>
+      <tr><td class="f">F7</td><td>Share settings edited</td><td>No file moves; only <code>permissions.list</code> reveals it</td><td>Re-partition on next F4</td></tr>
+      <tr><td class="f">F8</td><td>First run</td><td>Scan roots → derive classes → seed Entities from Linear + GitHub</td><td>Index skeletons, Entities</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">F4</span><h2>Reconcile: rebuilding from what is actually there</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 960 300" role="img" aria-label="Reconcile walks folders, reads identity stamps and permissions, partitions into classes, then rebuilds each index and runs drift checks.">
+        <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">
+          <g fill="var(--surface)" stroke="var(--rule-strong)">
+            <rect x="8" y="40" width="130" height="56"/><rect x="176" y="40" width="130" height="56"/>
+            <rect x="344" y="40" width="130" height="56"/><rect x="512" y="40" width="150" height="56"/>
+            <rect x="700" y="40" width="150" height="56"/>
+          </g>
+          <g fill="var(--ink)">
+            <text x="20" y="62">walk roots</text><text x="188" y="62">read stamps</text>
+            <text x="356" y="62">permissions</text><text x="524" y="62">partition</text><text x="712" y="62">rebuild index</text>
+          </g>
+          <g fill="var(--muted)" font-size="8.5">
+            <text x="20" y="78">every folder</text><text x="188" y="78">appProperties</text>
+            <text x="356" y="78">effective ACL</text><text x="524" y="78">acl_fingerprint</text>
+            <text x="712" y="78">per class, wholesale</text>
+            <text x="20" y="90">no path assumptions</text><text x="188" y="90">not filenames</text>
+            <text x="356" y="90">not folder inheritance</text><text x="524" y="90">classes discovered</text>
+            <text x="712" y="90">cache hit ⇒ no LLM</text>
+          </g>
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#a3)">
+            <path d="M138,68 L172,68"/><path d="M306,68 L340,68"/><path d="M474,68 L508,68"/><path d="M662,68 L696,68"/>
+            <path d="M775,96 L775,150"/>
+          </g>
+          <rect x="512" y="152" width="338" height="128" fill="var(--surface)" stroke="var(--inferred)"/>
+          <text x="524" y="172" fill="var(--inferred)" font-size="10.5">drift checks — what a rebuild cannot fix</text>
+          <g fill="var(--body)" font-size="9.5">
+            <text x="524" y="192">· direct share exceeding the folder's class</text>
+            <text x="524" y="210">· class re-partition since last run (no file moved)</text>
+            <text x="524" y="228">· exclusion pattern matched in a shared class</text>
+            <text x="524" y="246">· file with no identity stamp</text>
+            <text x="524" y="264">· edge violating intersection placement</text>
+          </g>
+          <rect x="8" y="152" width="460" height="128" fill="var(--surface)" stroke="var(--explicit)"/>
+          <text x="20" y="172" fill="var(--explicit)" font-size="10.5">what a rebuild handles for free</text>
+          <g fill="var(--body)" font-size="9.5">
+            <text x="20" y="192">· a file moved between folders — nothing tracked where it was</text>
+            <text x="20" y="210">· a file deleted — it simply stops appearing</text>
+            <text x="20" y="228">· a file renamed — identity is in appProperties, not the name</text>
+            <text x="20" y="246">· a whole index deleted — regenerate it</text>
+            <text x="20" y="264">· claims for unchanged content — cache hit, no spend</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Reconcile is the normal path, not recovery. The left panel is what disappears once
+    indexes are derived; the right panel is the residue that still needs checking — and the second
+    item there leaves no trace in the file tree at all.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">F5</span><h2>Retrieval: scope is discovered, not filtered</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 960 320" role="img" aria-label="A question resolves entity names, then reads only the class indexes Drive permits, funnels through metadata, lexical and semantic stages, refetches mutable records, and returns a cited answer.">
+        <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">
+          <rect x="8" y="30" width="120" height="48" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="20" y="50" fill="var(--ink)">question</text><text x="20" y="66" fill="var(--muted)" font-size="8.5">from a person</text>
+
+          <rect x="164" y="30" width="150" height="48" fill="var(--surface)" stroke="var(--explicit)"/>
+          <text x="176" y="50" fill="var(--explicit)">resolve names → ids</text>
+          <text x="176" y="66" fill="var(--muted)" font-size="8.5">before filtering, never after</text>
+
+          <line x1="360" y1="14" x2="360" y2="306" stroke="var(--accent)" stroke-dasharray="3 4"/>
+          <text x="366" y="24" fill="var(--accent)" font-size="9">DRIVE ACL — a boundary, not a filter</text>
+
+          <g fill="var(--surface)" stroke="var(--rule-strong)">
+            <rect x="392" y="40" width="150" height="36"/><rect x="392" y="86" width="150" height="36"/>
+          </g>
+          <rect x="392" y="132" width="150" height="36" fill="none" stroke="var(--inferred)" stroke-dasharray="4 3"/>
+          <g fill="var(--ink)">
+            <text x="404" y="63">class index A</text><text x="404" y="109">class index B</text>
+          </g>
+          <text x="404" y="155" fill="var(--inferred)">class index C</text>
+          <text x="548" y="155" fill="var(--inferred)" font-size="8.5">denied — absent, not redacted</text>
+
+          <rect x="600" y="40" width="150" height="128" fill="var(--surface)" stroke="var(--rule-strong)"/>
+          <text x="612" y="60" fill="var(--ink)">funnel</text>
+          <g fill="var(--body)" font-size="9">
+            <text x="612" y="80">1 metadata filter</text>
+            <text x="612" y="98">2 lexical</text>
+            <text x="612" y="116">3 semantic rerank</text>
+          </g>
+          <text x="612" y="140" fill="var(--muted)" font-size="8.5">cap ~20 claims</text>
+          <text x="612" y="156" fill="var(--muted)" font-size="8.5">no embedding store</text>
+
+          <rect x="790" y="40" width="160" height="60" fill="var(--surface)" stroke="var(--temporal)"/>
+          <text x="802" y="60" fill="var(--temporal)">refetch mutable</text>
+          <text x="802" y="76" fill="var(--muted)" font-size="8.5">Linear, open PRs — live</text>
+          <text x="802" y="92" fill="var(--muted)" font-size="8.5">unreachable ⇒ say so</text>
+
+          <rect x="600" y="212" width="350" height="92" fill="var(--surface)" stroke="var(--explicit)"/>
+          <text x="612" y="232" fill="var(--explicit)">answer contract</text>
+          <g fill="var(--body)" font-size="9">
+            <text x="612" y="252">claims + source links + dates · inferred edges marked</text>
+            <text x="612" y="270">scope note: which classes were searched</text>
+            <text x="612" y="288">"as of" stamps on live data · explicit not-found</text>
+          </g>
+
+          <g stroke="var(--rule-strong)" color="var(--rule-strong)" fill="none" marker-end="url(#a4)">
+            <path d="M128,54 L160,54"/><path d="M314,54 L388,58"/><path d="M314,60 L388,104"/>
+            <path d="M542,58 L596,80"/><path d="M542,104 L596,96"/>
+            <path d="M750,104 L790,104" stroke="none"/>
+            <path d="M750,80 L786,74"/><path d="M870,100 L870,208"/>
+          </g>
+          <g stroke="var(--inferred)" color="var(--inferred)" fill="none" stroke-dasharray="3 3">
+            <path d="M314,66 L388,146"/>
+          </g>
+          <text x="120" y="196" fill="var(--muted)" font-size="9">The same question returns different answers</text>
+          <text x="120" y="212" fill="var(--muted)" font-size="9">to different people. That is correct — and</text>
+          <text x="120" y="228" fill="var(--muted)" font-size="9">it is why the scope note is mandatory.</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Retrieval attempts every configured class and lets Drive deny what it will. Class C
+    is not filtered out of the results — it was never readable, so its contents and its existence are
+    both simply absent.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">Rule</span><h2>Where an edge is allowed to live</h2></div>
+  <figure>
+    <div class="dia">
+      <svg viewBox="0 0 900 260" role="img" aria-label="Two overlapping audiences: an edge may only be stored in a class whose audience fits inside the overlap; with no overlap the edge exists nowhere.">
+        <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">
+          <text x="20" y="24" fill="var(--muted)" font-size="9.5" letter-spacing="1.2">OVERLAP EXISTS</text>
+          <circle cx="150" cy="130" r="76" fill="none" stroke="var(--rule-strong)"/>
+          <circle cx="250" cy="130" r="76" fill="none" stroke="var(--rule-strong)"/>
+          <path d="M200,68 A76,76 0 0,0 200,192 A76,76 0 0,0 200,68" fill="var(--explicit)" opacity="0.18"/>
+          <text x="92" y="134" fill="var(--ink)">record A</text>
+          <text x="256" y="134" fill="var(--ink)">record B</text>
+          <text x="176" y="220" fill="var(--explicit)" font-size="9.5">edge lives here</text>
+          <text x="120" y="238" fill="var(--muted)" font-size="8.5">widest class whose audience fits inside the overlap</text>
+
+          <text x="500" y="24" fill="var(--muted)" font-size="9.5" letter-spacing="1.2">NO OVERLAP</text>
+          <circle cx="600" cy="130" r="76" fill="none" stroke="var(--rule-strong)"/>
+          <circle cx="780" cy="130" r="76" fill="none" stroke="var(--rule-strong)"/>
+          <text x="558" y="134" fill="var(--ink)">team A</text>
+          <text x="742" y="134" fill="var(--ink)">team B</text>
+          <text x="618" y="220" fill="var(--inferred)" font-size="9.5">edge exists nowhere</text>
+          <text x="540" y="238" fill="var(--muted)" font-size="8.5">storing it anywhere would leak that the far record exists</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Restrictiveness is a partial order once classes are discovered rather than ranked,
+    so "store it at the more restricted end" has no meaning — two teams are incomparable. The rule is
+    an intersection, and an empty intersection means no edge at all.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="shead"><span class="snum">Never</span><h2>What never happens</h2></div>
+  <p>Boundaries are easier to hold when they are written down as prohibitions rather than inferred
+  from the happy path.</p>
+  <ul>
+    <li><strong>No status is ever stored.</strong> Linear state and open-PR state are refetched on every answer, or the answer says the source was unreachable.</li>
+    <li><strong>No raw content is written outside its target class.</strong> Never written somewhere convenient and moved afterwards.</li>
+    <li><strong>No skip log names what it skipped.</strong> Rule id and count only.</li>
+    <li><strong>No suppressed-result counts.</strong> Out-of-scope material is absent, never "3 hidden".</li>
+    <li><strong>No cross-class synthesis is persisted downward.</strong> Answering across classes you hold is fine; writing that answer into the broader one is not.</li>
+    <li><strong>No claim without verbatim evidence.</strong> Failures are discarded, never repaired.</li>
+    <li><strong>No inferred edge presented as fact,</strong> and no silent traversal of one.</li>
+    <li><strong>No writes back to Plaud, Linear, or GitHub.</strong> The KB is read-only toward its sources.</li>
+    <li><strong>No service token holding everyone's access.</strong> The agent acts with the asking person's credentials.</li>
+    <li><strong>No counts presented as measurements.</strong> The corpus is a convenience sample that merely looks tabular.</li>
+  </ul>
+</section>
+
+<footer>
+  Companion to the architecture page · specs in docs/specs/ · plan in docs/superpowers/plans/<br>
+  Zone C shows Plaud unverified: its connector is unauthorized, so §1.7's assumptions stand untested.
+</footer>
+
+</div>
