@@ -15,7 +15,7 @@
 - **Read-only.** `usher-linear` may never call `save_issue`, `save_comment`, `save_project`, `delete_comment` or any other mutating tool. The OAuth grant includes write, so the boundary exists only in the skill.
 - **Never name the MCP tool prefix.** Refer to Linear tools by bare name (`list_issues`, `get_issue`, `list_projects`). The prefix differs between the plugin connector (`mcp__plugin_linear_linear__*`) and the claude.ai one (`mcp__claude_ai_Linear__*`), and hardcoding one breaks the other.
 - **Every answer ends with a `Searched:` line.** Spec requirement, and it is how a reader sees what was *not* looked at.
-- **Missing `~/.usher/settings.json` means every source is enabled.** Usher must work before setup exists.
+- **No settings file, no setup step.** Every value is discovered from where it already lives (spec: Configuration). A source that cannot answer is simply absent.
 - **Empty is an answer.** Never reconstruct issues that were not read.
 - Repo: `~/Projects/usher`. Plugin: `plugins/usher/`.
 
@@ -347,12 +347,12 @@ Route to **more than one** skill when the question spans them: "why did we build
 
 ## Which sources exist
 
-Read `~/.usher/settings.json` if it is there. A source marked `"enabled": false` is invisible: never
-invoked, never mentioned, never counted in a fan-out.
+There is no configuration to read. A source skill that is not installed cannot be invoked, and a
+source that has never been able to answer is simply absent - omit it entirely rather than reporting
+it missing. Someone with no Twenty account should never read the word Twenty.
 
-**If the file is missing, every source is enabled.** Usher works before setup has ever been run.
-
-A skill that is not installed cannot be invoked - say so rather than pretending you asked it.
+A source that normally works and is failing right now is different, and worth saying:
+`linear(unavailable) - run /mcp to reconnect`.
 
 ## Rules
 
@@ -369,8 +369,9 @@ A skill that is not installed cannot be invoked - say so rather than pretending 
 
     Searched: linear, gdrive(unavailable)
 
-Name every source you invoked, whether or not it returned anything. Omit disabled sources entirely -
-they are not part of the picture. This line is how a reader learns what was *not* looked at.
+Name every source you invoked, whether or not it returned anything. Omit sources that are not set up
+at all - they are not part of the picture. This line is how a reader learns what was *not* looked
+at.
 ```
 
 - [ ] **Step 4: Validate**
@@ -406,6 +407,6 @@ git commit -m "feat: usher router - 10/10 routing fixtures pass"
 
 ## Not in this plan
 
-`usher-setup` and the other five source skills. Setup is deliberately deferred: Linear needs no
-settings, and the router treats a missing settings file as "everything enabled", so this slice works
-without it. Build setup when the second source arrives and there is something to configure.
+The other five source skills. There is no `usher-setup`: every value a skill needs is discovered from
+where it already lives, so there is nothing to configure. The one that looked like it needed storing
+- the Obsidian vault path - turned out to be in Obsidian's own registry.
