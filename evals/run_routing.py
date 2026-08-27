@@ -38,20 +38,27 @@ def skills_invoked(stream: str) -> set:
     return fired
 
 
-def ask(question: str) -> str:
-    result = subprocess.run(
-        [
-            "claude",
-            "--plugin-dir", str(PLUGIN),
-            "-p", question,
-            "--output-format", "stream-json",
-            "--verbose",
-        ],
-        capture_output=True,
-        text=True,
-        timeout=TIMEOUT_SECONDS,
-    )
-    return result.stdout
+def ask(question: str) -> tuple[str, int, str]:
+    """Run a question and return (stdout, exit_code, stderr).
+
+    On timeout, returns ("", -1, "TIMEOUT").
+    """
+    try:
+        result = subprocess.run(
+            [
+                "claude",
+                "--plugin-dir", str(PLUGIN),
+                "-p", question,
+                "--output-format", "stream-json",
+                "--verbose",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=TIMEOUT_SECONDS,
+        )
+        return result.stdout, result.returncode, result.stderr
+    except subprocess.TimeoutExpired:
+        return "", -1, "TIMEOUT"
 
 
 def load_fixtures():
@@ -70,7 +77,17 @@ def main() -> int:
     fixtures = load_fixtures()
 
     for question, expected in fixtures:
-        fired = skills_invoked(ask(question))
+        stdout, returncode, stderr = ask(question)
+
+        # Treat invocation errors as failures, never passes
+        if returncode != 0 or (not stdout and returncode != 0):
+            fired = set()
+            stderr_trimmed = stderr[:200] if stderr and stderr != "TIMEOUT" else stderr
+            failures.append((question, sorted(expected), sorted(fired), returncode, stderr_trimmed))
+            print("FAIL  " + question[:58])
+            continue
+
+        fired = skills_invoked(stdout)
         # Only judge usher skills; an unrelated skill firing is not a routing error.
         fired = {s for s in fired if s == "usher" or s.startswith("usher-")}
         fired.discard("usher")  # the router itself is not a destination
@@ -78,13 +95,22 @@ def main() -> int:
         if fired == expected:
             print("PASS  " + question[:58])
         else:
-            failures.append((question, sorted(expected), sorted(fired)))
+            failures.append((question, sorted(expected), sorted(fired), returncode, ""))
             print("FAIL  " + question[:58])
 
     print("\n%d/%d routed correctly" % (len(fixtures) - len(failures), len(fixtures)))
-    for question, expected, got in failures:
-        print("\n  %s\n    expected: %s\n    fired:    %s"
-              % (question, expected or ["none"], got or ["none"]))
+    for failure in failures:
+        if len(failure) == 5:
+            question, expected, got, returncode, stderr = failure
+            print("\n  %s\n    expected: %s\n    fired:    %s\n    exit:     %s" %
+                  (question, expected or ["none"], got or ["none"], returncode))
+            if stderr:
+                print("    stderr:   %s" % stderr)
+        else:
+            # Legacy unpacking for backwards compat (shouldn't happen)
+            question, expected, got = failure
+            print("\n  %s\n    expected: %s\n    fired:    %s" %
+                  (question, expected or ["none"], got or ["none"]))
 
     return 1 if failures else 0
 
