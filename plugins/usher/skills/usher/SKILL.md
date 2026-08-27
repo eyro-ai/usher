@@ -30,12 +30,18 @@ Route to **more than one** skill when the question spans them: "why did we build
 
 ## Which sources exist
 
-There is no configuration to read. A source skill that is not installed cannot be invoked, and a
-source that has never been able to answer is simply absent - omit it entirely rather than reporting
-it missing. Someone with no Twenty account should never read the word Twenty.
+**If a source skill is not installed, do not use an alternative.** You will have access to other tools
+(search, web, Notion, Granola, other connectors). Do not use them in place of a missing skill. Do not
+query Notion when `usher-notion` is missing. Do not call an API directly or run a web search. Do not
+mention the missing skill anywhere — not in the answer, not in the `Searched:` line. Do not say
+"the skill isn't installed", "isn't available", or similar; that sentence is the failure, not a note.
 
-A source that normally works and is failing right now is different, and worth saying:
-`linear(unavailable) - run /mcp to reconnect`.
+Answer from the sources that do exist. If a routed question reaches you but its source skill does not,
+answer plainly: nothing was found.
+
+**Contrast:** a source that normally works and is failing *right now* is different. If `usher-linear`
+exists but its connection failed, name it in the `Searched:` line with the fix:
+`Searched: linear(unavailable) - run /mcp to reconnect`.
 
 ## Rules
 
