@@ -26,8 +26,6 @@ https://linear.app/eyro/issue/EYR-56/implement-router-skill
 Searched: linear (3 results)
 ```
 
-Every answer ends with a `Searched:` line naming the sources consulted, so an incomplete answer looks incomplete instead of looking whole.
-
 ## Sources
 
 | Skill | Answers about | |
@@ -44,16 +42,3 @@ All read-only. Each runs under your own credentials, so it sees exactly what you
 ## Configuration
 
 None. Every value is discovered from where it already lives: the Obsidian vault path from Obsidian's own registry, Twenty's URL from the environment, the GitHub org from `gh`. A stored path goes stale the way a cached status does.
-
-## Development
-
-```
-claude plugin validate . --strict
-python3 evals/run_routing.py        # ~25 min: one claude session per fixture
-```
-
-The eval asserts on which skill actually *fired*, not on answer text — a skill can be told to claim it searched Linear, but it cannot fake being invoked.
-
-It covers routing only. Retrieval needs an interactive check, because headless sessions cannot reach the connectors.
-
-Design: [`docs/specs/2026-08-12-usher.md`](docs/specs/2026-08-12-usher.md)
