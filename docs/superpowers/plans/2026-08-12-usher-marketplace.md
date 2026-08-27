@@ -1,14 +1,14 @@
-# Eyro KB — Phase 1: Marketplace, first source, and the router
+# Usher — Phase 1: Marketplace, first source, and the router
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** A working Eyro marketplace containing a router skill and one source skill, with a routing eval that proves the router sends questions to the right places.
+**Goal:** A working Usher marketplace containing a router skill and one source skill, with a routing eval that proves the router sends questions to the right places.
 
-**Architecture:** A git repo holding a Claude Code plugin marketplace. One plugin, `eyro-kb`, carrying every skill — install once, and sources stay independent as separate `SKILL.md` files. No code ships in the plugin: skills are instructions, and the only executable artifact is the eval harness, which lives outside the plugin.
+**Architecture:** A git repo holding a Claude Code plugin marketplace. One plugin, `usher`, carrying every skill — install once, and sources stay independent as separate `SKILL.md` files. No code ships in the plugin: skills are instructions, and the only executable artifact is the eval harness, which lives outside the plugin.
 
 **Tech Stack:** Markdown skills, a `marketplace.json` manifest, `gh` CLI, and `claude -p` headless for the eval.
 
-**Spec:** `docs/specs/2026-08-12-eyro-kb.md`
+**Spec:** `docs/specs/2026-08-12-usher.md`
 
 ## Global Constraints
 
@@ -17,7 +17,7 @@
 - **Every answer ends with a `Searched:` line** naming the sources consulted. This is a spec requirement ("say what was searched") *and* the hook the eval depends on — do not remove or reword it.
 - **Empty is an answer.** Never reconstruct a plausible answer when a search returns nothing.
 - Skills run under the user's own credentials. Nothing in a skill may take, or suggest, a shared or service token.
-- Repo for the marketplace: `~/Projects/eyro-marketplace` (separate from `plaud-kb`, which holds the spec and this plan).
+- Repo for the marketplace: `~/Projects/usher` (separate from `plaud-kb`, which holds the spec and this plan).
 
 ## Why GitHub is the first source
 
@@ -26,12 +26,12 @@ Of the five sources, `gh` is the only one verified reachable right now: Drive an
 ## File structure
 
 ```
-~/Projects/eyro-marketplace/
+~/Projects/usher/
   .claude-plugin/marketplace.json      the marketplace manifest
-  plugins/eyro-kb/
+  plugins/usher/
     .claude-plugin/plugin.json         the plugin manifest
-    skills/eyro-kb/SKILL.md            the router          (Task 4)
-    skills/eyro-github/SKILL.md        first source        (Task 2)
+    skills/usher/SKILL.md            the router          (Task 4)
+    skills/usher-github/SKILL.md        first source        (Task 2)
   eval/
     routing.tsv                        question -> expected sources
     run_routing.py                     the harness         (Task 3)
@@ -43,17 +43,17 @@ Of the five sources, `gh` is the only one verified reachable right now: Drive an
 ### Task 1: Marketplace and plugin skeleton
 
 **Files:**
-- Create: `~/Projects/eyro-marketplace/.claude-plugin/marketplace.json`
-- Create: `~/Projects/eyro-marketplace/plugins/eyro-kb/.claude-plugin/plugin.json`
-- Create: `~/Projects/eyro-marketplace/README.md`
+- Create: `~/Projects/usher/.claude-plugin/marketplace.json`
+- Create: `~/Projects/usher/plugins/usher/.claude-plugin/plugin.json`
+- Create: `~/Projects/usher/README.md`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: a marketplace named `eyro` containing one plugin named `eyro-kb`, installable with `/plugin marketplace add ~/Projects/eyro-marketplace`.
+- Produces: a marketplace named `usher` containing one plugin named `usher`, installable with `/plugin marketplace add ~/Projects/usher`.
 
 - [ ] **Step 1: Write the failing check**
 
-Create `~/Projects/eyro-marketplace/eval/check_manifests.py`:
+Create `~/Projects/usher/eval/check_manifests.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -76,7 +76,7 @@ check(mkt_path.exists(), f"missing {mkt_path}")
 
 if mkt_path.exists():
     mkt = json.loads(mkt_path.read_text())
-    check(mkt.get("name") == "eyro", "marketplace name must be 'eyro'")
+    check(mkt.get("name") == "usher", "marketplace name must be 'usher'")
     check(isinstance(mkt.get("plugins"), list) and mkt["plugins"],
           "marketplace must list at least one plugin")
     for entry in mkt.get("plugins", []):
@@ -103,41 +103,41 @@ print("manifests OK")
 
 - [ ] **Step 2: Run it to verify it fails**
 
-Run: `python3 ~/Projects/eyro-marketplace/eval/check_manifests.py`
+Run: `python3 ~/Projects/usher/eval/check_manifests.py`
 Expected: FAIL — `missing .../.claude-plugin/marketplace.json`
 
 - [ ] **Step 3: Write the manifests**
 
-Create `~/Projects/eyro-marketplace/.claude-plugin/marketplace.json`:
+Create `~/Projects/usher/.claude-plugin/marketplace.json`:
 
 ```json
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "eyro",
-  "description": "Eyro's internal knowledge skills — ask one question, get it routed to the system that holds the answer",
+  "name": "usher",
+  "description": "Usher — internal knowledge skills — ask one question, get it routed to the system that holds the answer",
   "owner": {
     "name": "Eyro"
   },
   "plugins": [
     {
-      "name": "eyro-kb",
+      "name": "usher",
       "description": "Ask questions across Google Drive, Obsidian, Linear, Twenty CRM and GitHub. Queries each source in place and answers with citations.",
       "version": "0.1.0",
       "category": "productivity",
       "author": {
         "name": "Eyro"
       },
-      "source": "./plugins/eyro-kb"
+      "source": "./plugins/usher"
     }
   ]
 }
 ```
 
-Create `~/Projects/eyro-marketplace/plugins/eyro-kb/.claude-plugin/plugin.json`:
+Create `~/Projects/usher/plugins/usher/.claude-plugin/plugin.json`:
 
 ```json
 {
-  "name": "eyro-kb",
+  "name": "usher",
   "version": "0.1.0",
   "description": "Ask questions across Eyro's systems. A router skill plus one skill per source, each querying in place.",
   "author": {
@@ -146,52 +146,52 @@ Create `~/Projects/eyro-marketplace/plugins/eyro-kb/.claude-plugin/plugin.json`:
 }
 ```
 
-Create `~/Projects/eyro-marketplace/README.md`:
+Create `~/Projects/usher/README.md`:
 
 ```markdown
-# Eyro KB
+# Usher
 
 Ask Claude a question; it works out which system holds the answer, queries it in
 place, and replies with citations. There is no index and no copy of any data.
 
 ## Install
 
-    /plugin marketplace add ~/Projects/eyro-marketplace
-    /plugin install eyro-kb@eyro
+    /plugin marketplace add ~/Projects/usher
+    /plugin install usher@usher
 
 ## Skills
 
-- `eyro-kb` — the router. The only one worth remembering.
-- `eyro-github` — pull requests, code, and review discussion.
+- `usher` — the router. The only one worth remembering.
+- `usher-github` — pull requests, code, and review discussion.
 
 Each source skill runs under your own credentials, so it sees exactly what you see.
 
 ## Design
 
-See `docs/specs/2026-08-12-eyro-kb.md` in the `plaud-kb` repo.
+See `docs/specs/2026-08-12-usher.md` in the `plaud-kb` repo.
 ```
 
 - [ ] **Step 4: Run the check to verify it passes**
 
-Run: `python3 ~/Projects/eyro-marketplace/eval/check_manifests.py`
+Run: `python3 ~/Projects/usher/eval/check_manifests.py`
 Expected: PASS — `manifests OK`
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd ~/Projects/eyro-marketplace
+cd ~/Projects/usher
 git init -q
 printf '.DS_Store\n' > .gitignore
 git add -A
-git commit -m "feat: eyro marketplace skeleton with the eyro-kb plugin"
+git commit -m "feat: usher marketplace skeleton"
 ```
 
 ---
 
-### Task 2: The `eyro-github` source skill
+### Task 2: The `usher-github` source skill
 
 **Files:**
-- Create: `~/Projects/eyro-marketplace/plugins/eyro-kb/skills/eyro-github/SKILL.md`
+- Create: `~/Projects/usher/plugins/usher/skills/usher-github/SKILL.md`
 
 **Interfaces:**
 - Consumes: `gh` CLI, authenticated as the user.
@@ -199,18 +199,18 @@ git commit -m "feat: eyro marketplace skeleton with the eyro-kb plugin"
 
 - [ ] **Step 1: Write the failing smoke check**
 
-Create `~/Projects/eyro-marketplace/eval/smoke_github.sh`:
+Create `~/Projects/usher/eval/smoke_github.sh`:
 
 ```bash
 #!/usr/bin/env bash
-# Does eyro-github actually retrieve, and does it report what it searched?
+# Does usher-github actually retrieve, and does it report what it searched?
 set -uo pipefail
 
 if ! gh auth status >/dev/null 2>&1; then
   echo "SKIP: gh is not authenticated"; exit 0
 fi
 
-QUESTION="Using the eyro-github skill, find any pull request in my repositories that mentions tests. Answer briefly."
+QUESTION="Using the usher-github skill, find any pull request in my repositories that mentions tests. Answer briefly."
 OUT=$(claude -p "$QUESTION" --output-format text 2>/dev/null)
 
 if ! grep -qiE '^Searched: *github' <<<"$OUT"; then
@@ -218,27 +218,27 @@ if ! grep -qiE '^Searched: *github' <<<"$OUT"; then
   echo "--- last 15 lines ---"; tail -15 <<<"$OUT"
   exit 1
 fi
-echo "PASS: eyro-github answered and reported its search"
+echo "PASS: usher-github answered and reported its search"
 ```
 
-Make it executable: `chmod +x ~/Projects/eyro-marketplace/eval/smoke_github.sh`
+Make it executable: `chmod +x ~/Projects/usher/eval/smoke_github.sh`
 
 - [ ] **Step 2: Run it to verify it fails**
 
-Run: `~/Projects/eyro-marketplace/eval/smoke_github.sh`
+Run: `~/Projects/usher/eval/smoke_github.sh`
 Expected: FAIL — no `Searched: github` line, because the skill does not exist yet.
 
 - [ ] **Step 3: Write the skill**
 
-Create `~/Projects/eyro-marketplace/plugins/eyro-kb/skills/eyro-github/SKILL.md`:
+Create `~/Projects/usher/plugins/usher/skills/usher-github/SKILL.md`:
 
 ```markdown
 ---
-name: eyro-github
-description: Search GitHub for how something was built and why — pull requests, review discussion, and code. Use when a question is about implementation, when a change shipped, who wrote it, or why the code looks the way it does. Called directly, or by eyro-kb when routing a question.
+name: usher-github
+description: Search GitHub for how something was built and why — pull requests, review discussion, and code. Use when a question is about implementation, when a change shipped, who wrote it, or why the code looks the way it does. Called directly, or by usher when routing a question.
 ---
 
-# eyro-github
+# usher-github
 
 Answers from GitHub using the `gh` CLI under the user's own token, so it sees exactly the
 repositories they can see. Nothing is copied or stored.
@@ -280,19 +280,19 @@ First install the plugin so the skill is live:
 
 ```bash
 # in an interactive Claude session
-/plugin marketplace add ~/Projects/eyro-marketplace
-/plugin install eyro-kb@eyro
+/plugin marketplace add ~/Projects/usher
+/plugin install usher@usher
 ```
 
-Then run: `~/Projects/eyro-marketplace/eval/smoke_github.sh`
-Expected: PASS — `eyro-github answered and reported its search`
+Then run: `~/Projects/usher/eval/smoke_github.sh`
+Expected: PASS — `usher-github answered and reported its search`
 
 - [ ] **Step 5: Commit**
 
 ```bash
-cd ~/Projects/eyro-marketplace
+cd ~/Projects/usher
 git add -A
-git commit -m "feat: eyro-github source skill with a retrieval smoke check"
+git commit -m "feat: usher-github source skill with a retrieval smoke check"
 ```
 
 ---
@@ -300,8 +300,8 @@ git commit -m "feat: eyro-github source skill with a retrieval smoke check"
 ### Task 3: The routing eval harness
 
 **Files:**
-- Create: `~/Projects/eyro-marketplace/eval/routing.tsv`
-- Create: `~/Projects/eyro-marketplace/eval/run_routing.py`
+- Create: `~/Projects/usher/eval/routing.tsv`
+- Create: `~/Projects/usher/eval/run_routing.py`
 
 **Interfaces:**
 - Consumes: the `Searched: <sources>` line produced by every source skill (Task 2) and by the router (Task 4).
@@ -309,7 +309,7 @@ git commit -m "feat: eyro-github source skill with a retrieval smoke check"
 
 - [ ] **Step 1: Write the fixtures and the harness**
 
-Create `~/Projects/eyro-marketplace/eval/routing.tsv` (tab-separated: question, then expected sources):
+Create `~/Projects/usher/eval/routing.tsv` (tab-separated: question, then expected sources):
 
 ```
 # question	expected sources (comma separated)
@@ -329,11 +329,11 @@ What do we know about churn?	gdrive,obsidian,linear,twenty,github
 Tell me everything about the pricing change	gdrive,obsidian,linear,twenty,github
 ```
 
-Create `~/Projects/eyro-marketplace/eval/run_routing.py`:
+Create `~/Projects/usher/eval/run_routing.py`:
 
 ```python
 #!/usr/bin/env python3
-"""Routing eval — does eyro-kb send each question to the right sources?
+"""Routing eval — does usher send each question to the right sources?
 
 Parses the `Searched:` line every skill is required to emit. A source marked
 "(unavailable)" still counts as routed to: the router chose it, the source could
@@ -414,7 +414,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 2: Run it to verify it fails**
 
-Run: `python3 ~/Projects/eyro-marketplace/eval/run_routing.py`
+Run: `python3 ~/Projects/usher/eval/run_routing.py`
 Expected: FAIL — most rows report `no Searched line`, because no router exists yet. The `github` rows may already pass from Task 2; that is fine and expected.
 
 - [ ] **Step 3: Record the baseline**
@@ -424,38 +424,38 @@ Note in the commit message how many rows passed before the router existed. A rou
 - [ ] **Step 4: Commit**
 
 ```bash
-cd ~/Projects/eyro-marketplace
+cd ~/Projects/usher
 git add -A
 git commit -m "test: routing eval harness and fixtures (failing until the router lands)"
 ```
 
 ---
 
-### Task 4: The `eyro-kb` router
+### Task 4: The `usher` router
 
 **Files:**
-- Create: `~/Projects/eyro-marketplace/plugins/eyro-kb/skills/eyro-kb/SKILL.md`
+- Create: `~/Projects/usher/plugins/usher/skills/usher/SKILL.md`
 
 **Interfaces:**
-- Consumes: the source skills. Only `eyro-github` exists so far; the others are named here so the router routes to them the moment they are installed.
+- Consumes: the source skills. Only `usher-github` exists so far; the others are named here so the router routes to them the moment they are installed.
 - Produces: an answer ending in `Searched: <source>[, <source>...]`, satisfying `eval/run_routing.py`.
 
 - [ ] **Step 1: Run the eval to confirm it is still failing**
 
-Run: `python3 ~/Projects/eyro-marketplace/eval/run_routing.py`
+Run: `python3 ~/Projects/usher/eval/run_routing.py`
 Expected: FAIL — the non-github rows have no `Searched` line.
 
 - [ ] **Step 2: Write the router skill**
 
-Create `~/Projects/eyro-marketplace/plugins/eyro-kb/skills/eyro-kb/SKILL.md`:
+Create `~/Projects/usher/plugins/usher/skills/usher/SKILL.md`:
 
 ```markdown
 ---
-name: eyro-kb
+name: usher
 description: The front door to Eyro's knowledge. Use for any question about what was said, decided, built, planned, or agreed — meetings, notes, issues, customers, code. Works out which systems hold the answer, queries them in place, and answers with citations. Triggers on "what do we know about", "what was decided", "what's the status of", "what happened with", "how was this built", and on any question naming a customer, project, meeting, or repository.
 ---
 
-# eyro-kb
+# usher
 
 Route the question to the sources that can answer it, ask them, and answer with citations.
 
@@ -465,18 +465,18 @@ Route the question to the sources that can answer it, ask them, and answer with 
 
 | The question is about | Ask |
 |---|---|
-| What was said or decided in a meeting | `eyro-gdrive` |
-| The user's own notes and thinking | `eyro-obsidian` |
-| Status, ownership, what is planned | `eyro-linear` |
-| A customer, a deal, an account's history | `eyro-twenty` |
-| How something was built, or why the code is that way | `eyro-github` |
+| What was said or decided in a meeting | `usher-gdrive` |
+| The user's own notes and thinking | `usher-obsidian` |
+| Status, ownership, what is planned | `usher-linear` |
+| A customer, a deal, an account's history | `usher-twenty` |
+| How something was built, or why the code is that way | `usher-github` |
 | An open topic, with no obvious home | **all five** |
 
 When the question is unscoped — a bare topic, or "what do we know about X" — **fan out to every
 source.** The cost is latency; the alternative is silently missing where the answer actually was.
 
 Route to more than one source whenever the question spans them. "Why did we build it that way"
-is often `eyro-github` *and* `eyro-gdrive`: the code says what, the meeting says why.
+is often `usher-github` *and* `usher-gdrive`: the code says what, the meeting says why.
 
 ## Rules
 
@@ -502,13 +502,13 @@ what was *not* looked at — and an answer without it is not finished.
 
 ```bash
 # in an interactive Claude session
-/plugin uninstall eyro-kb@eyro
-/plugin install eyro-kb@eyro
+/plugin uninstall usher@usher
+/plugin install usher@usher
 ```
 
 - [ ] **Step 4: Run the eval to verify it passes**
 
-Run: `python3 ~/Projects/eyro-marketplace/eval/run_routing.py`
+Run: `python3 ~/Projects/usher/eval/run_routing.py`
 Expected: PASS — `14/14 routed correctly`
 
 If some rows fail, the fix is the routing table's wording, not the fixtures. Fixtures describe what
@@ -517,9 +517,9 @@ you want; changing them to match the behaviour is how an eval stops meaning anyt
 - [ ] **Step 5: Commit**
 
 ```bash
-cd ~/Projects/eyro-marketplace
+cd ~/Projects/usher
 git add -A
-git commit -m "feat: eyro-kb router — 14/14 routing fixtures pass"
+git commit -m "feat: usher router — 14/14 routing fixtures pass"
 ```
 
 ---
@@ -545,16 +545,16 @@ trigger and route correctly. That is what Tasks 2 and 4 measure.
 - `python3 eval/check_manifests.py` passes.
 - `eval/smoke_github.sh` passes — a real GitHub question returns cited results.
 - `python3 eval/run_routing.py` reports 14/14.
-- `/plugin install eyro-kb@eyro` works from a clean session, and `eyro-kb` appears in the skill list.
+- `/plugin install usher@usher` works from a clean session, and `usher` appears in the skill list.
 
 ## What comes next
 
 | Phase | Builds | Blocked on |
 |---|---|---|
-| 2 | `eyro-gdrive`, `eyro-linear`, `eyro-twenty`, `eyro-obsidian` — one skill each, same shape as `eyro-github`, one routing fixture batch each | Drive and Linear auth; Twenty's base URL and key; the Obsidian vault path |
-| 3 | The scheduled ingest routine: `PlaudInbox` → `Meetings/<category>`, original to `Processed/`, errors to `Failed/` | The Zapier connection from Plaud to Drive; phase 2's `eyro-gdrive` |
+| 2 | `usher-gdrive`, `usher-linear`, `usher-twenty`, `usher-obsidian` — one skill each, same shape as `usher-github`, one routing fixture batch each | Drive and Linear auth; Twenty's base URL and key; the Obsidian vault path |
+| 3 | The scheduled ingest routine: `PlaudInbox` → `Meetings/<category>`, original to `Processed/`, errors to `Failed/` | The Zapier connection from Plaud to Drive; phase 2's `usher-gdrive` |
 
-Phase 2 is four near-identical tasks and can be split across parallel workers once `eyro-github`
+Phase 2 is four near-identical tasks and can be split across parallel workers once `usher-github`
 has settled the pattern. Do not start it before Task 4 passes — the router's shape is what the other
 sources conform to.
 
