@@ -1,17 +1,25 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "usher",
-  "description": "Usher — ask one question, get it routed to the system that holds the answer",
+  "description": "Usher \u2014 ask one question, get it routed to the system that holds the answer",
   "owner": {
     "name": "Eyro"
   },
   "plugins": [
     {
       "name": "usher",
-      "description": "Ask questions across Google Drive, Notion, Obsidian, Linear, Twenty CRM and GitHub. Routes each question to the sources that can answer it, queries them in place, and replies with citations. Nothing is indexed or copied.",
-      "version": "0.1.0",
+      "description": "Ask questions across Google Drive, Notion, Obsidian, Linear, Twenty CRM and GitHub. Routes each question to the sources that can answer it, queries them in place, and replies with citations. Nothing is indexed or copied. Linear and GitHub sources are live; the rest are planned.",
+      "version": "0.2.0",
       "category": "productivity",
-      "keywords": ["knowledge", "search", "router", "linear", "notion", "drive", "github"],
+      "keywords": [
+        "knowledge",
+        "search",
+        "router",
+        "linear",
+        "notion",
+        "drive",
+        "github"
+      ],
       "author": {
         "name": "Eyro"
       },
