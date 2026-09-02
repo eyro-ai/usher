@@ -83,6 +83,16 @@ No `usher-setup` skill: whichever skill needs a value asks for it on first use a
 Settings exist only where discovery cannot express intent — see
 [`docs/decisions.md`](docs/decisions.md) for why, and why that reversed twice.
 
+### This file is not loaded at runtime
+
+The plugin ships `plugin.json` and the `SKILL.md` files — nothing else. Skills run from
+`~/.claude/plugins/cache/`, invoked from wherever the user happens to be, which is usually not this
+repo. **So this file is for whoever writes a skill; it never reaches a running one.**
+
+Any rule a *running* skill must obey has to be in its own `SKILL.md`. Read-only, the `Searched:`
+line, and the settings-write mechanic below are all repeated in each skill that needs them, and that
+duplication is deliberate.
+
 ### Touching the settings file
 
 `~/.usher/settings.json` is shared by every skill. Load it, change your own key, write the whole

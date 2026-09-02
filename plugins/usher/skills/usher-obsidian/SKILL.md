@@ -31,8 +31,12 @@ candidates, so the user picks rather than types a path. Obsidian's registry live
 Its `vaults` object maps an id to `{path, ts, open}`. Treat a **missing** `open` key as closed - not
 every entry has one.
 
-Then write the answer into `~/.usher/settings.json` under `obsidian.vaults`, preserving any other
-keys in that file, and do not ask again.
+Then write the answer into `~/.usher/settings.json` under `obsidian.vaults`, and do not ask again.
+
+**Write it as read-modify-write on the whole file.** Load the existing JSON, change only the
+`obsidian` key, write the whole object back. Never write a file containing just your own key: the
+file is shared with every other skill, and replacing it wipes their settings — silently, and not in
+a way this skill would ever notice. Store the path absolute; expand `~` before writing.
 
 The registry says which vaults *exist*; the settings say which the user *wants searched*. They are
 different questions, and only the second one is yours to honour. Never search a vault that is not
