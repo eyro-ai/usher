@@ -72,4 +72,10 @@ whichever tool authored them — a plugin's name means nothing to someone readin
 
 ## Decided against — don't reintroduce without reading why
 
-No settings file and no `usher-setup` skill. Every value is discovered from where it already lives; the one that looked like it needed storing, the Obsidian vault path, is in Obsidian's own registry. Reasoning in [`docs/specs/2026-08-12-usher.md`](docs/specs/2026-08-12-usher.md).
+No `usher-setup` skill: whichever skill needs a value asks for it on first use and writes it to
+`~/.usher/settings.json` itself, preserving the other keys. Nothing to run before a first question.
+
+Settings exist only where discovery cannot express intent. Obsidian is the case: its registry lists
+every vault ever opened, including ones that should never be searched, so the user has to say which.
+Everything else — Twenty's URL, the GitHub owner, the Linear workspace — is still discovered.
+Reasoning in [`docs/specs/2026-08-12-usher.md`](docs/specs/2026-08-12-usher.md).
