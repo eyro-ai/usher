@@ -53,7 +53,7 @@ size and none of its text.
 | A topic | `rg -il "<terms>"` for candidate notes, then `rg -n -C2 "<terms>" <file>` for the passage |
 | A note the user names | match the filename first - notes are usually titled by their topic |
 | What connects to something | follow `[[wikilinks]]` out of the best hit, one hop only |
-| A time period | scope to the daily-notes folder for that year |
+| A time period | scope to the daily-notes folder, which nests year then month (`2024/04 April/`) |
 
 Widen the terms once if the first search is empty. Two empty searches mean it is not written down.
 
