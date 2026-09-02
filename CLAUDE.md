@@ -78,9 +78,25 @@ reversed twice.
 ## Decided against — don't reintroduce without reading why
 
 No `usher-setup` skill: whichever skill needs a value asks for it on first use and writes it to
-`~/.usher/settings.json` itself, preserving the other keys. Nothing to run before a first question.
+`~/.usher/settings.json` itself. Nothing to run before a first question.
 
-Settings exist only where discovery cannot express intent. Obsidian is the case: its registry lists
-every vault ever opened, including ones that should never be searched, so the user has to say which.
-Everything else — Twenty's URL, the GitHub owner, the Linear workspace — is still discovered.
-Reasoning in [`docs/specs/2026-08-12-usher.md`](docs/specs/2026-08-12-usher.md).
+Settings exist only where discovery cannot express intent — see
+[`docs/decisions.md`](docs/decisions.md) for why, and why that reversed twice.
+
+### The settings file — rules, not suggestions
+
+`~/.usher/settings.json` is shared by every skill. Five rules, because each is somewhere two skills
+would otherwise disagree:
+
+1. **One top-level key per source, named after the skill's suffix.** `usher-obsidian` owns
+   `obsidian`. Not `obsidian_vaults`, not `vault`. Read and write only your own key.
+2. **`version` is an integer at the top level.** A skill finding a version it does not recognise
+   says so and stops; it does not assume a shape.
+3. **Paths are absolute.** No `~`, no relative paths, no environment variables — expand when
+   writing, store the result. Otherwise every skill must remember to expand, and the one that
+   forgets fails looking exactly like "not found".
+4. **Writing is read-modify-write on the whole object.** Load the file, change your key, write it
+   all back. **Never write a file containing only your own key** — that destroys every other
+   skill's settings, and yours will not be the skill that notices.
+5. **A malformed file stops the skill.** Say the file is corrupt and where it is. Never overwrite to
+   recover: it holds the only copy of decisions the user made.
