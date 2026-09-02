@@ -68,7 +68,13 @@ def load_fixtures():
             if not row or row[0].startswith("#"):
                 continue
             expected = row[1].strip()
-            rows.append((row[0].strip(), set() if expected == "none" else {expected}))
+            if expected == "none":
+                skills = set()
+            else:
+                # a fixture may expect several skills, comma separated - an unscoped
+                # question fans out, so its expectation grows as sources are added
+                skills = {s.strip() for s in expected.split(",") if s.strip()}
+            rows.append((row[0].strip(), skills))
     return rows
 
 
