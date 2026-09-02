@@ -13,6 +13,17 @@ git -c credential."https://github.com".helper= \
 
 Wrong account gives `Repository not found`. That is an identity error, not a bad remote — GitHub returns 404 rather than 403 so it doesn't leak the repo's existence.
 
+## Shared state between sessions
+
+Two things are global to the machine, not to a session, and a concurrently-running session for
+another company will take them:
+
+- **The `gh` active account** — hence the per-command recipe above.
+- **The Linear MCP connector's workspace.** It is machine-global, so a session working on a
+  different organisation can point it elsewhere. **Always call `get_workspace` and check the
+  name before trusting a Linear answer** — a connector on the wrong workspace answers
+  confidently from it, cites correctly, and emits a normal `Searched:` line.
+
 ## The eval
 
 ```bash
@@ -39,6 +50,20 @@ Two traps:
 - **Never hardcode an MCP tool prefix.** Both `mcp__plugin_linear_linear__*` and `mcp__claude_ai_Linear__*` occur, depending on how a teammate installed the connector. Name tools bare: `list_issues`, `get_workspace`.
 - End every answer with `Searched: <source> (<n> results)`, including when nothing was found.
 - A source that isn't installed is **invisible** — not named, not apologised for.
+
+## Known gap — `usher-linear` does not verify the workspace
+
+The skill calls `get_workspace` before answering, but only to check Linear is *reachable*. It never
+checks *which* workspace it reached.
+
+With a connector pointed at the wrong company — which happens, see above — the skill answers from
+that company, cites its issues correctly, and ends with a normal `Searched: linear (n results)`.
+Nothing in the output reveals the mistake. Not an error: a wrong answer that looks right, which for
+a knowledge base spanning two companies on one machine is the worst available failure mode.
+
+Fix when picking this up: have each source skill assert its expected workspace/org and refuse if it
+does not match, rather than only checking reachability. The same applies to every source skill still
+to be written.
 
 ## Decided against — don't reintroduce without reading why
 
