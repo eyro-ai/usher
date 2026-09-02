@@ -65,6 +65,11 @@ Fix when picking this up: have each source skill assert its expected workspace/o
 does not match, rather than only checking reachability. The same applies to every source skill still
 to be written.
 
+## Layout
+
+`docs/specs/` holds design; `docs/plans/` holds implementation plans. Deliberately not namespaced by
+whichever tool authored them — a plugin's name means nothing to someone reading this repo later.
+
 ## Decided against — don't reintroduce without reading why
 
 No settings file and no `usher-setup` skill. Every value is discovered from where it already lives; the one that looked like it needed storing, the Obsidian vault path, is in Obsidian's own registry. Reasoning in [`docs/specs/2026-08-12-usher.md`](docs/specs/2026-08-12-usher.md).
