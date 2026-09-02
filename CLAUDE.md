@@ -67,8 +67,13 @@ to be written.
 
 ## Layout
 
-`docs/specs/` holds design; `docs/plans/` holds implementation plans. Deliberately not namespaced by
+`docs/specs/` holds design; `docs/plans/` holds implementation plans; `docs/decisions.md` records
+only the decisions that reversed or discarded a named alternative. Deliberately not namespaced by
 whichever tool authored them — a plugin's name means nothing to someone reading this repo later.
+
+**Read `docs/decisions.md` before proposing a settings file, a permission model, a stored index, or
+a hardcoded org.** Each has been tried and rejected here, with reasons, and one of them was
+reversed twice.
 
 ## Decided against — don't reintroduce without reading why
 
