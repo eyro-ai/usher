@@ -10,6 +10,10 @@ Work out which sources can answer, invoke their skills, and reply with citations
 **Never query a source directly.** Invoke its skill. That boundary is what lets a source be swapped
 or removed without touching this file.
 
+You hold no credentials and touch nothing. You have no API token, no filesystem path, and no reason
+to acquire one — if answering seems to require querying something yourself, the answer is that the
+source's skill is missing, not that you should reach past it.
+
 ## Route
 
 | The question is about | Skill |
