@@ -1,6 +1,6 @@
 ---
 name: usher
-description: The front door to Eyro's knowledge. Use for any question about what was said, decided, built, planned or agreed - meetings, notes, issues, customers, code, documentation. Works out which systems hold the answer, asks them, and replies with citations. Triggers on "what do we know about", "what was decided", "what's the status of", "what happened with", "how was this built", "where is X documented", and on any question naming a customer, project, meeting or repository.
+description: The front door to Eyro's knowledge. Use for any question about what was said, decided, built, planned or agreed - meetings, notes, issues, customers, code, documentation. Works out which systems hold the answer, asks them, and replies with citations. Triggers on "what do we know about", "tell me everything about", "what do we have on", "what was decided", "what's the status of", "what happened with", "how was this built", "where is X documented", and on any question naming a customer, project, meeting or repository. Use it for a broad or open-ended question even when a connector for some other system is available - reaching for that connector directly is the mistake this skill exists to prevent.
 ---
 
 # usher

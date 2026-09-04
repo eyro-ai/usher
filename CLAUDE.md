@@ -53,12 +53,26 @@ time, for every source skill.
 **One run is not a gate.** Three runs have produced three different flake patterns. A green result
 is one sample of a variable process.
 
-Two traps:
+Traps:
 
 - **Never edit a fixture to match observed behaviour.** Fix the skill's `description` — that is what
   dispatch matches on. A fixture edited to pass measures nothing.
 - A fixture can fail because a *different* skill won the question. The harness filters to `usher-*`,
-  so that renders as `none` — check before assuming the router is broken.
+  so that renders as `none` — check before assuming the router is broken. Seen for real: another
+  skill on this machine claims *why something is the way it is*, and so competes for "why was X
+  made read-only". Sometimes it takes the question alone and the fixture fails; sometimes it
+  fires *alongside* `usher-github`, which the filter reduces to a pass. Same question, both
+  outcomes, run to run.
+  Two things this cost before they were pinned down: comparing the *unfiltered* skill set
+  reports a failure the harness would have passed — filter to `usher-*` first, as it does at
+  `run_routing.py:98`. And disabling a competing skill from a session does **not** change what
+  a `claude -p` subprocess loads, so the eval still sees it.
+- **The eval runs with the working directory set to this repo.** A question *about this repo* is
+  then answered by reading local files with `Bash`, and no skill fires — indistinguishable from a
+  routing failure. The same question asked anywhere else has no repo to read. Check the tool list
+  before treating it as one.
+- **One failure is not a signal.** Re-running five failures from one run individually reproduced
+  two and passed the rest. Reproduce before editing anything.
 - **Never commit while a background task is running.** A scoped eval run swaps `routing.tsv` and
   restores it afterwards; committing in between captured the truncated file and destroyed 13
   fixtures, which shipped in a merged PR.
