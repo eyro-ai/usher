@@ -7,6 +7,27 @@ Newest first.
 
 ---
 
+## `usher-twenty` reads its credentials at query time and stores only a path
+
+Rejected: discovery from the environment alone, which is what the spec said. Also rejected: asking
+for the key on first use and storing it.
+
+`TWENTY_BASE_URL` and `TWENTY_API_KEY` are not in the environment on the machine this was built on —
+they live in a `.env` belonging to a different project. Environment-only discovery would therefore
+make the source *permanently* absent under "a source that cannot answer is simply absent": silently,
+and correctly by the rule, which is the worst way to be unavailable.
+
+Storing the key was worse. Twenty's key is a JWT and expires, so a copy in `~/.usher/settings.json`
+goes stale and then fails as a 401 — indistinguishable from the instance being down, and repaired in
+the wrong place.
+
+So settings record the **path** to the file holding the key, and the key is read from it on every
+question. The two `TWENTY_*` lines are extracted individually rather than the file sourced, because
+such a file usually holds unrelated tokens for unrelated services.
+
+*Would reopen it:* Twenty issuing non-expiring or per-user keys, or the values moving into the
+environment for real.
+
 ## Settings exist, but only where discovery cannot express intent
 
 **Reversed twice.** Now: `~/.usher/settings.json`, written by whichever skill needs a value.

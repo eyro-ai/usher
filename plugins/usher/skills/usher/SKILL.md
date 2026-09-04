@@ -22,12 +22,12 @@ source's skill is missing, not that you should reach past it.
 | What was said or decided in a meeting | `usher-gdrive` |
 | Documentation, handbook, written-up knowledge | `usher-notion` |
 | The user's own notes and thinking | `usher-obsidian` |
-| A customer, a deal, an account's history | `usher-twenty` |
+| A person or company you know, a customer, a deal, an account's history | `usher-twenty` |
 | How something was built, or why the code is that way | `usher-github` |
 
-Route on the noun. A question naming a customer goes to `usher-twenty`; one naming a repository goes
-to `usher-github`. Only fan out when there is genuinely no signal - a bare topic, or "what do we know
-about X".
+Route on the noun. A question naming a person or company outside the team goes to `usher-twenty`;
+one naming a repository goes to `usher-github`. Only fan out when there is genuinely no signal -
+a bare topic, or "what do we know about X".
 
 Route to **more than one** skill when the question spans them: "why did we build it that way" is
 `usher-github` for what and `usher-gdrive` for why.
