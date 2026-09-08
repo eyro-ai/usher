@@ -4,6 +4,9 @@ Ask a question. Usher works out which system holds the answer, queries it in pla
 
 No index, no sync, no copy of your data.
 
+**New here?** Follow the guide for how you work:
+[Claude Code, on a fresh Mac](docs/onboarding.md) · [Claude Cowork](docs/onboarding-cowork.md)
+
 ## Install
 
 ```
