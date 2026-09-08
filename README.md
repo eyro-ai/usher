@@ -4,6 +4,9 @@ Ask a question. Usher works out which system holds the answer, queries it in pla
 
 No index, no sync, no copy of your data.
 
+**New here, or on a fresh Mac?** Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
+nothing installed to a first answer, about 30 minutes.
+
 ## Install
 
 ```
