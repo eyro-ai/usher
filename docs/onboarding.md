@@ -3,8 +3,9 @@
 You ask a question in plain English. Usher works out which of our systems holds the answer, looks
 there, and tells you what it found with links you can check.
 
-No jargon needed. You will type a few commands, and each one is explained. Budget **30 minutes**,
-most of it waiting for downloads.
+No jargon needed. This guide uses **Claude Desktop** — the Mac app — so most of it is clicking.
+There are a few commands, and each one is explained. Budget **30 minutes**, most of it waiting for
+downloads.
 
 ---
 
@@ -23,43 +24,51 @@ about the rest.
 
 ---
 
-## Step 1 — Install Claude Code
+## Step 1 — Install Claude
 
-Usher is not an app you open. It runs inside **Claude Code**, which is a chat window in your
-terminal.
+Download **[Claude for Mac](https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect)**.
+One download works on every Mac, old or new.
 
-Open **Terminal** (press `⌘ Space`, type `terminal`, hit return). Paste this and press return:
+Open the downloaded file, drag Claude into your Applications folder, and launch it. Sign in with your
+account.
 
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
-```
-
-When it finishes, close Terminal completely (`⌘ Q`) and open it again. Then check it worked:
-
-```bash
-claude --version
-```
-
-You should see a version number. If you see `command not found`, close and reopen Terminal once more —
-the installer adds Claude to your path and that only takes effect in a fresh window.
-
-Now start it:
-
-```bash
-claude
-```
-
-It will ask you to sign in through your browser. Do that, and you will land in a chat prompt. **Leave
-this window open** — the rest of the steps happen either here or in a second Terminal tab.
+Then click the **Code** tab. That is Claude Code — the part that can reach our systems. Everything
+below happens there.
 
 ---
 
-## Step 2 — Sign in to GitHub
+## Step 2 — Set up your first session
 
-**Do this before installing Usher.** Usher lives in a private repository, and the install will fail
-with a confusing error if GitHub does not know who you are yet.
+Before you type anything, there are four settings in the prompt area. They matter more than they
+look.
 
-Open a second Terminal tab (`⌘ T`) and install the GitHub command-line tool:
+| Setting | Choose | Why |
+|---|---|---|
+| **Environment** | `Local` | Runs on your Mac, using your own accounts |
+| **Project folder** | see below | Decides which GitHub organisation questions are scoped to |
+| **Model** | the default | You can change it mid-conversation |
+| **Permission mode** | `Manual` to start | Claude asks before running anything. Move to `Accept edits` once you are comfortable |
+
+**The project folder is not cosmetic.** When you ask a question about code, Usher works out which
+GitHub organisation to search from the folder you picked. Choose a folder containing one of our
+repositories and it searches ours. Choose an unrelated folder and GitHub questions come back
+**empty rather than wrong** — which is safer, but still not what you wanted.
+
+If you have no repository checked out yet, pick any folder for now and name the repository in your
+question instead: *"what changed in the usher repo recently?"*
+
+---
+
+## Step 3 — Sign in to GitHub
+
+**Do this before installing Usher.** Usher lives in a private repository, and the install fails with
+a confusing error if GitHub does not know who you are yet.
+
+You need a terminal for this part. Claude Desktop has one built in — open the **Terminal panel**
+beside the chat. (The macOS Terminal app works just as well: press `⌘ Space`, type `terminal`, hit
+return.)
+
+Install the GitHub command-line tool:
 
 ```bash
 brew install gh
@@ -72,7 +81,7 @@ developer tools:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Follow its final instructions (it will print two commands to run), then try `brew install gh` again.
+Follow its final instructions (it prints two commands to run), then try `brew install gh` again.
 
 Now sign in:
 
@@ -83,33 +92,68 @@ gh auth login
 Choose **GitHub.com**, then **HTTPS**, then **Login with a web browser**. Copy the code it shows,
 press return, and paste the code in the browser page that opens.
 
+Then hand those credentials to git itself:
+
+```bash
+gh auth setup-git
+```
+
+Skipping this line mostly works — until Usher tries to update itself in the background, cannot prove
+who you are, and quietly stops updating.
+
 Check it worked:
 
 ```bash
 gh auth status
 ```
 
-You want to see your username and a tick. If it lists more than one account, note which is active —
-that matters later.
+You want to see your username and a tick. If it lists more than one account, note which is
+**active** — that matters later.
 
 ---
 
-## Step 3 — Install Usher
+## Step 4 — Install Usher
 
-Back in your **Claude Code** window, type these two, one at a time:
+> **Do not use `/plugin`.** In the Mac app it answers `/plugin isn't available in this environment`.
+> That command works only in the terminal version of Claude Code. Use one of the routes below
+> instead.
 
+**Route A — two commands.** You are already in the terminal from Step 3, so this is the short way:
+
+```bash
+claude plugin marketplace add eyro-ai/usher
 ```
-/plugin marketplace add eyro-ai/usher
+
+```bash
+claude plugin install usher@usher
 ```
 
-```
-/plugin install usher@usher
+`eyro-ai/usher` is the whole address — Claude finds the marketplace file inside the repository. The
+`usher@usher` in the second command is *plugin@marketplace*: both happen to be called `usher`.
+
+**Route A′ — the same thing from the plugin manager.** Click **+** next to the prompt box and choose
+**Plugins**. You can add `eyro-ai/usher` and install from there without touching a terminal, if you
+prefer clicking.
+
+**Route B — paste it into your settings once.** Useful if you are setting up several machines. Open
+`~/.claude/settings.json` and add these two keys alongside whatever is already there — do not replace
+the file:
+
+```json
+"extraKnownMarketplaces": {
+  "usher": { "source": { "source": "github", "repo": "eyro-ai/usher" } }
+},
+"enabledPlugins": {
+  "usher@usher": true
+}
 ```
 
-Then restart Claude Code — press `⌘ Q`, open Terminal, run `claude` again.
+Either way, **restart Claude** afterwards — quit with `⌘ Q` and open it again. Plugins only load at
+startup.
 
-To check it landed, type `/` and scroll the list. You should see several entries beginning `usher`.
-There should be **five**: `usher`, and one each for Linear, GitHub, Obsidian and Twenty.
+To check it landed, type `/` in the prompt box (or click **+** → **Slash commands**) and look for
+entries beginning `usher`. There should be **five**: `usher`, and one each for Linear, GitHub,
+Obsidian and Twenty.
 
 > **If you got `Repository not found`:** GitHub does not think you have access. Either your invite to
 > the eyro-ai organisation has not arrived, or a different GitHub account is signed in. Run
@@ -118,21 +162,21 @@ There should be **five**: `usher`, and one each for Linear, GitHub, Obsidian and
 
 ---
 
-## Step 4 — Connect Linear
+## Step 5 — Connect Linear
 
-In Claude Code, type:
+Click the **+** button next to the prompt box, choose **Connectors**, and pick **Linear** from the
+list. Follow the browser prompts.
 
-```
-/mcp
-```
+**When it asks which workspace, choose `eyro`.** This is the one step where picking wrong gives you
+confidently wrong answers rather than an error, so read that screen properly.
 
-Pick **Linear** from the list and follow the browser prompts. **When it asks which workspace, choose
-`eyro`** — this is the one step where picking wrong gives you confidently wrong answers rather than
-an error, so read that screen properly.
+You can review or disconnect it later under **Settings → Connectors**.
+
+> Typing `/mcp` will not do this for you — in the Mac app, connectors are the **+** button.
 
 ---
 
-## Step 5 — Point it at your notes *(skip if you do not use Obsidian)*
+## Step 6 — Point it at your notes *(skip if you do not use Obsidian)*
 
 If you keep notes in [Obsidian](https://obsidian.md), Usher can search them. Nothing to configure —
 the first time you ask about your notes it will list the vaults it found and ask which to use. It
@@ -142,23 +186,28 @@ Your notes stay on your Mac. Nothing is uploaded, copied or indexed anywhere.
 
 ---
 
-## Step 6 — Twenty CRM *(optional)*
+## Step 7 — Twenty CRM *(optional)*
 
-If you were given a Twenty address and key, add them to your shell so Usher can find them:
+If you were given a Twenty address and key, put them in a file called `.env` in your home folder:
 
 ```bash
-echo 'export TWENTY_BASE_URL="the-address-you-were-given"' >> ~/.zshrc
-echo 'export TWENTY_API_KEY="the-key-you-were-given"' >> ~/.zshrc
+echo 'TWENTY_BASE_URL=the-address-you-were-given' >> ~/.env
+echo 'TWENTY_API_KEY=the-key-you-were-given' >> ~/.env
 ```
 
-Close and reopen Terminal. **Treat the key like a password** — do not paste it into chat, a ticket or
-a document.
+The first time you ask a question about people or customers, Usher will find that file and ask
+whether to use it. Say yes and it remembers.
+
+It stores **where the key lives, never the key itself** — Twenty's keys expire, and a stale copy
+would fail in a way that looks like the server being down.
+
+**Treat the key like a password.** Do not paste it into chat, a ticket or a document.
 
 ---
 
 ## Ask your first question
 
-In Claude Code, just ask. No command, no prefix:
+In the Code tab, just ask. No command, no prefix:
 
 > What is the status of the knowledge base project?
 
@@ -189,10 +238,12 @@ Ask follow-ups in plain language. It keeps the thread.
 
 | What you see | What it means |
 |---|---|
+| `/plugin isn't available in this environment` | Expected in the Mac app. Use Route A or B in Step 4. |
 | `Repository not found` | Wrong GitHub account, or your eyro-ai invite has not arrived. Run `gh auth status`. |
-| Fewer than five `usher` entries | An older version is installed. Run `/plugin marketplace update usher` then `/plugin update usher`, and restart. |
-| GitHub questions return nothing, no error | A different GitHub account is active. `gh auth status` will show which. |
-| Answers about the wrong company's work | Linear is connected to the wrong workspace. Run `/mcp`, reconnect Linear, choose `eyro`. It sometimes takes two attempts. |
+| Fewer than five `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
+| No `usher` entries at all | The plugin did not load. Check Step 4 ran without an error, then restart Claude. |
+| GitHub questions return nothing, no error | Either a different GitHub account is active — `gh auth status` shows which — or your project folder points somewhere unrelated. See Step 2. |
+| Answers about the wrong company's work | Linear is connected to the wrong workspace. **Settings → Connectors**, reconnect Linear, choose `eyro`. It sometimes takes two attempts. |
 | "Nothing found" for something you know exists | Try naming it more specifically. Two vague searches usually mean it is somewhere Usher cannot reach yet. |
 
 If a question gets no useful answer twice, the source may simply not be connected yet. Check the
