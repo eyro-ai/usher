@@ -176,6 +176,12 @@ Obsidian, Twenty and Google Drive.
 
 ---
 
+> **Faster route:** with Usher installed, you can type `set up Usher` and it will walk you through
+> the remaining steps, check what is already connected, and verify each one as it goes. The steps
+> below are the same thing done by hand — follow either.
+
+---
+
 ## Step 5 — Connect Linear
 
 Click the **+** button next to the prompt box, choose **Connectors**, and pick **Linear** from the
