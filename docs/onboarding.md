@@ -114,11 +114,7 @@ You want to see your username and a tick. If it lists more than one account, not
 
 ## Step 4 — Install Usher
 
-> **Do not use `/plugin`.** In the Mac app it answers `/plugin isn't available in this environment`.
-> That command works only in the terminal version of Claude Code. Use one of the routes below
-> instead.
-
-**Route A — two commands.** You are already in the terminal from Step 3, so this is the short way:
+Run these commands in terminal:
 
 ```bash
 claude plugin marketplace add eyro-ai/usher
@@ -131,29 +127,20 @@ claude plugin install usher@usher
 `eyro-ai/usher` is the whole address — Claude finds the marketplace file inside the repository. The
 `usher@usher` in the second command is *plugin@marketplace*: both happen to be called `usher`.
 
-**Route A′ — the same thing from the plugin manager.** Click **+** next to the prompt box and choose
-**Plugins**. You can add `eyro-ai/usher` and install from there without touching a terminal, if you
-prefer clicking.
+Check both landed before moving on:
 
-**Route B — paste it into your settings once.** Useful if you are setting up several machines. Open
-`~/.claude/settings.json` and add these two keys alongside whatever is already there — do not replace
-the file:
-
-```json
-"extraKnownMarketplaces": {
-  "usher": { "source": { "source": "github", "repo": "eyro-ai/usher" } }
-},
-"enabledPlugins": {
-  "usher@usher": true
-}
+```bash
+claude plugin marketplace list
 ```
 
-Either way, **restart Claude** afterwards — quit with `⌘ Q` and open it again. Plugins only load at
-startup.
+```bash
+claude plugin list
+```
 
-To check it landed, type `/` in the prompt box (or click **+** → **Slash commands**) and look for
-entries beginning `usher`. There should be **seven**: `usher`, one each for Linear, GitHub,
-Obsidian, Twenty and Google Drive, and `usher-onboarding` — the setup walkthrough.
+The first should show `usher` alongside `claude-plugins-official`; the second should show
+`usher@usher`, its version, and `enabled`.
+
+Restart Claude Desktop afterwards.
 
 > **If you got `Repository not found`:** GitHub does not think you have access. Either your invite to
 > the eyro-ai organisation has not arrived, or a different GitHub account is signed in. Run
@@ -266,7 +253,9 @@ Ask follow-ups in plain language. It keeps the thread.
 
 | What you see | What it means |
 |---|---|
-| `/plugin isn't available in this environment` | Expected in the Mac app. Use Route A or B in Step 4. |
+| `/plugin isn't available in this environment` | Expected in the Mac app. Use the terminal commands in Step 4. |
+| `Failed to add marketplace` in the plugin manager | The app cannot reach your SSH key. Use the terminal commands in Step 4, or set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`. |
+| Usher worked yesterday and its skills are gone today | A failed background refresh **removes** a private marketplace rather than leaving it stale. Re-run the two commands in Step 4. To stop it happening: `launchctl setenv CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE 1`. |
 | `Repository not found` | Wrong GitHub account, or your eyro-ai invite has not arrived. Run `gh auth status`. |
 | Fewer than seven `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
 | No `usher` entries at all | The plugin did not load. Check Step 4 ran without an error, then restart Claude. |

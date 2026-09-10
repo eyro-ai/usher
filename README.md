@@ -10,8 +10,6 @@ No index, no sync, no copy of your data.
 Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
 nothing installed to a first answer using the Claude Desktop app, about 30 minutes.
 
-Already installed? Type `set up Usher` and it walks you through connecting the rest interactively.
-
 ## Use
 
 Just ask. The router picks the source.
