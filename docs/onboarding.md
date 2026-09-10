@@ -152,8 +152,8 @@ Either way, **restart Claude** afterwards — quit with `⌘ Q` and open it agai
 startup.
 
 To check it landed, type `/` in the prompt box (or click **+** → **Slash commands**) and look for
-entries beginning `usher`. There should be **five**: `usher`, and one each for Linear, GitHub,
-Obsidian and Twenty.
+entries beginning `usher`. There should be **six**: `usher`, and one each for Linear, GitHub,
+Obsidian, Twenty and Google Drive.
 
 > **If you got `Repository not found`:** GitHub does not think you have access. Either your invite to
 > the eyro-ai organisation has not arrived, or a different GitHub account is signed in. Run
@@ -176,7 +176,22 @@ You can review or disconnect it later under **Settings → Connectors**.
 
 ---
 
-## Step 6 — Point it at your notes *(skip if you do not use Obsidian)*
+## Step 6 — Connect Google Drive
+
+Same place: **+** → **Connectors** → **Google Drive**. This is what answers questions about meetings,
+recordings, and any document, sheet or slide deck kept in Drive.
+
+**Sign in with the account that actually holds our files.** Meeting recordings often land in a
+*personal* Drive rather than a work one, so if you have both signed in on this Mac, read the account
+picker properly. The first time you ask a Drive question, Usher tells you which account it reached
+and asks whether that is the one to use — say no if it names the wrong one, and reconnect.
+
+Like Linear, the wrong account here does not produce an error. It produces real files from the wrong
+place, cited correctly.
+
+---
+
+## Step 7 — Point it at your notes *(skip if you do not use Obsidian)*
 
 If you keep notes in [Obsidian](https://obsidian.md), Usher can search them. Nothing to configure —
 the first time you ask about your notes it will list the vaults it found and ask which to use. It
@@ -186,7 +201,7 @@ Your notes stay on your Mac. Nothing is uploaded, copied or indexed anywhere.
 
 ---
 
-## Step 7 — Twenty CRM *(optional)*
+## Step 8 — Twenty CRM *(optional)*
 
 If you were given a Twenty address and key, put them in a file called `.env` in your home folder:
 
@@ -227,6 +242,7 @@ A few more to try:
 |---|---|
 | *Why was the deploy gate made read-only?* | GitHub — pull requests and the discussion in them |
 | *What are my notes on positioning?* | Your Obsidian vault |
+| *What did we decide on the partner call?* | Google Drive — meeting transcripts |
 | *What do I know about Acme?* | Twenty CRM |
 | *What do we know about onboarding?* | Everywhere at once |
 
@@ -240,7 +256,7 @@ Ask follow-ups in plain language. It keeps the thread.
 |---|---|
 | `/plugin isn't available in this environment` | Expected in the Mac app. Use Route A or B in Step 4. |
 | `Repository not found` | Wrong GitHub account, or your eyro-ai invite has not arrived. Run `gh auth status`. |
-| Fewer than five `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
+| Fewer than six `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
 | No `usher` entries at all | The plugin did not load. Check Step 4 ran without an error, then restart Claude. |
 | GitHub questions return nothing, no error | Either a different GitHub account is active — `gh auth status` shows which — or your project folder points somewhere unrelated. See Step 2. |
 | Answers about the wrong company's work | Linear is connected to the wrong workspace. **Settings → Connectors**, reconnect Linear, choose `eyro`. It sometimes takes two attempts. |
@@ -253,8 +269,8 @@ If a question gets no useful answer twice, the source may simply not be connecte
 
 ## What it cannot do yet
 
-**Google Drive and Notion are not built.** Questions about meeting transcripts or documentation in
-those places will come back empty. That is not a fault, and Usher will not pretend otherwise.
+**Notion is not built.** Questions about the handbook or written-up documentation will come back
+empty. That is not a fault, and Usher will not pretend otherwise.
 
 **It only reads.** Usher never creates, edits or deletes anything — no issues, no notes, no
 pull requests, no CRM records. It cannot change your work by accident.

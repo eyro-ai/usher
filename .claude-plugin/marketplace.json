@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "usher",
-      "description": "Ask questions across Google Drive, Notion, Obsidian, Linear, Twenty CRM and GitHub. Routes each question to the sources that can answer it, queries them in place, and replies with citations. Nothing is indexed or copied. Linear, GitHub, Obsidian and Twenty sources are live; the rest are planned.",
-      "version": "0.4.1",
+      "description": "Ask questions across Google Drive, Notion, Obsidian, Linear, Twenty CRM and GitHub. Routes each question to the sources that can answer it, queries them in place, and replies with citations. Nothing is indexed or copied. Linear, GitHub, Obsidian, Twenty and Google Drive sources are live; Notion is planned.",
+      "version": "0.5.0",
       "category": "productivity",
       "keywords": [
         "knowledge",

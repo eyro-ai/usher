@@ -38,7 +38,7 @@ Searched: linear (3 results)
 | Skill | Answers about | |
 |---|---|---|
 | `usher-linear` | Issue and project status, ownership, cycles | ready |
-| `usher-gdrive` | What was said in a meeting | planned |
+| `usher-gdrive` | Meetings, and all of Drive - docs, sheets, slides | ready |
 | `usher-notion` | Docs, handbook | planned |
 | `usher-obsidian` | Your own notes | ready |
 | `usher-twenty` | People and companies you know, customers, deals | ready |
