@@ -7,6 +7,49 @@ Newest first.
 
 ---
 
+## `usher-onboarding` exists, and `usher-setup` stays dead anyway
+
+Rejected: reviving the setup skill as the place settings get written, which is what killing
+`usher-setup` ruled out. Also rejected: a diagnostic that reports what is missing and writes nothing.
+
+The rule that killed `usher-setup` was **nothing has to be run before a first question**, and it
+survives: every source skill keeps asking for what it needs on first use, and `usher-onboarding`
+writes the same keys in advance for someone who would rather do it all at once. Skipping it costs
+nothing. If a source skill ever drops its own asking because onboarding exists, the decision has been
+reversed by accident and wants recording as such.
+
+What made a setup skill worth having anyway is Twenty going remote. `usher-twenty` is told that if no
+`.env` is found, Twenty is not set up on this machine - say so and stop, do not ask for a path
+outright. With a remote instance and a fresh Mac there is no such file, and nothing in the
+ask-on-first-use model ever creates one, so the source is permanently and silently absent. That is
+the failure mode this file already calls the worst available one. Onboarding is the only thing that
+breaks the deadlock, because it can create the file rather than look for it.
+
+A diagnostic-only skill was rejected for the same reason: it would have described the deadlock
+accurately and left the user in it.
+
+*Would reopen it:* Twenty's credentials arriving through a connector or the environment, which would
+remove the one case ask-on-first-use cannot reach.
+
+## The onboarding guide stays complete rather than pointing at the skill
+
+Rejected: gutting the per-source steps of `docs/onboarding.md` and handing off to
+`usher-onboarding`, which would have left exactly one copy of each instruction.
+
+A reader who has installed nothing yet, or who would rather read than run a wizard, must be able to
+follow the guide start to finish. Indirection costs them the whole document; duplication only costs
+maintenance. So the guide keeps every step and gains a line naming the skill as the faster
+interactive route to the same outcome.
+
+The drift risk is accepted, not overlooked - and it is not hypothetical. This branch's predecessor
+found `/plugin marketplace add` documented as the primary route while the desktop app answers
+`/plugin isn't available in this environment`. When a setup procedure changes, both the guide and the
+skill must change.
+
+*Would reopen it:* the two copies actually contradicting each other in a way a reader hits.
+
+---
+
 ## `usher-gdrive` asserts the Google account and refuses on mismatch
 
 Rejected: naming the account in the answer and leaving the reader to notice, which is what every
