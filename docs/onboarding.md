@@ -114,11 +114,17 @@ You want to see your username and a tick. If it lists more than one account, not
 
 ## Step 4 — Install Usher
 
-> **Do not use `/plugin`.** In the Mac app it answers `/plugin isn't available in this environment`.
-> That command works only in the terminal version of Claude Code. Use one of the routes below
-> instead.
+**Do this in a terminal, not in the app.** Installing Usher is the one step the Mac app does not do
+reliably, and it is worth knowing why before you fight it:
 
-**Route A — two commands.** You are already in the terminal from Step 3, so this is the short way:
+- Typing `/plugin` in the app answers `/plugin isn't available in this environment`. That command
+  exists only in the terminal version of Claude Code.
+- The app's plugin manager (**+** → **Plugins**) *looks* like it should work, and often fails with a
+  bare **"Failed to add marketplace."** The cause is that `eyro-ai/usher` is cloned over **SSH**, and
+  an app launched from the Dock usually cannot reach the SSH key your terminal can. Nothing is wrong
+  with your access.
+
+So use the terminal — you are already in one from Step 3. Two commands:
 
 ```bash
 claude plugin marketplace add eyro-ai/usher
@@ -131,11 +137,29 @@ claude plugin install usher@usher
 `eyro-ai/usher` is the whole address — Claude finds the marketplace file inside the repository. The
 `usher@usher` in the second command is *plugin@marketplace*: both happen to be called `usher`.
 
-**Route A′ — the same thing from the plugin manager.** Click **+** next to the prompt box and choose
-**Plugins**. You can add `eyro-ai/usher` and install from there without touching a terminal, if you
-prefer clicking.
+Check both landed before moving on:
 
-**Route B — paste it into your settings once.** Useful if you are setting up several machines. Open
+```bash
+claude plugin marketplace list
+```
+
+```bash
+claude plugin list
+```
+
+The first should show `usher` alongside `claude-plugins-official`; the second should show
+`usher@usher`, its version, and `enabled`.
+
+**If you would rather the app's plugin manager worked**, tell Claude to clone over HTTPS instead of
+SSH — HTTPS uses the credentials `gh auth login` already put in your keychain:
+
+```bash
+launchctl setenv CLAUDE_CODE_PLUGIN_PREFER_HTTPS 1
+```
+
+Restart Claude afterwards. This is optional; the two commands above do not need it.
+
+**Setting up several machines?** You can declare it once in settings instead. Open
 `~/.claude/settings.json` and add these two keys alongside whatever is already there — do not replace
 the file:
 
@@ -266,7 +290,9 @@ Ask follow-ups in plain language. It keeps the thread.
 
 | What you see | What it means |
 |---|---|
-| `/plugin isn't available in this environment` | Expected in the Mac app. Use Route A or B in Step 4. |
+| `/plugin isn't available in this environment` | Expected in the Mac app. Use the terminal commands in Step 4. |
+| `Failed to add marketplace` in the plugin manager | The app cannot reach your SSH key. Use the terminal commands in Step 4, or set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`. |
+| Usher worked yesterday and its skills are gone today | A failed background refresh **removes** a private marketplace rather than leaving it stale. Re-run the two commands in Step 4. To stop it happening: `launchctl setenv CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE 1`. |
 | `Repository not found` | Wrong GitHub account, or your eyro-ai invite has not arrived. Run `gh auth status`. |
 | Fewer than seven `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
 | No `usher` entries at all | The plugin did not load. Check Step 4 ran without an error, then restart Claude. |

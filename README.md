@@ -10,6 +10,16 @@ No index, no sync, no copy of your data.
 Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
 nothing installed to a first answer using the Claude Desktop app, about 30 minutes.
 
+In a hurry, and `gh` already signed in to an account with `eyro-ai` access:
+
+```bash
+claude plugin marketplace add eyro-ai/usher
+claude plugin install usher@usher
+```
+
+Use a terminal, not the app's plugin manager — the app clones over SSH and usually cannot reach your
+key, which surfaces as a bare "Failed to add marketplace". Restart Claude afterwards.
+
 Already installed? Type `set up Usher` and it walks you through connecting the rest interactively.
 
 ## Use
