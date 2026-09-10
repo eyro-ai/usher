@@ -1,3 +1,17 @@
+# TODO:
+
+```
+/plugin marketplace add eyro-ai/usher
+/plugin install usher@usher
+```
+
+Those are terminal Claude Code. **In the Claude Desktop app `/plugin` is unavailable** — use
+`claude plugin marketplace add eyro-ai/usher` and `claude plugin install usher@usher` from a shell,
+or follow the onboarding guide above.
+
+Private repo — check `gh auth status` first. The wrong account gives you `Repository not found`, which means wrong identity, not a bad URL.
+
+
 # Getting started with Usher
 
 You ask a question in plain English. Usher works out which of our systems holds the answer, looks
