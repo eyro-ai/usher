@@ -1,6 +1,6 @@
 {
   "name": "usher",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Ask questions across Eyro's systems. A router skill plus one skill per source, each querying in place and citing what it found.",
   "author": {
     "name": "Eyro"

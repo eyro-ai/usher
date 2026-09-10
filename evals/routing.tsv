@@ -33,3 +33,10 @@ Is there a transcript of the partner meeting?	usher-gdrive
 What are my notes on the partner call?	usher-obsidian
 Who owns the meeting notes action items?	usher-linear
 Why does the transcript parser skip empty lines?	usher-github
+Set up Usher	usher-onboarding
+Help me connect my sources	usher-onboarding
+I just installed Usher, what now?	usher-onboarding
+Connect Linear	usher-onboarding
+Which sources am I connected to?	usher-onboarding
+What are my notes on onboarding?	usher-obsidian
+Why does the onboarding flow in our signup service redirect twice?	usher-github

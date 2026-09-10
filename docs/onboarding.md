@@ -1,17 +1,3 @@
-# TODO:
-
-```
-/plugin marketplace add eyro-ai/usher
-/plugin install usher@usher
-```
-
-Those are terminal Claude Code. **In the Claude Desktop app `/plugin` is unavailable** — use
-`claude plugin marketplace add eyro-ai/usher` and `claude plugin install usher@usher` from a shell,
-or follow the onboarding guide above.
-
-Private repo — check `gh auth status` first. The wrong account gives you `Repository not found`, which means wrong identity, not a bad URL.
-
-
 # Getting started with Usher
 
 You ask a question in plain English. Usher works out which of our systems holds the answer, looks
@@ -166,13 +152,19 @@ Either way, **restart Claude** afterwards — quit with `⌘ Q` and open it agai
 startup.
 
 To check it landed, type `/` in the prompt box (or click **+** → **Slash commands**) and look for
-entries beginning `usher`. There should be **six**: `usher`, and one each for Linear, GitHub,
-Obsidian, Twenty and Google Drive.
+entries beginning `usher`. There should be **seven**: `usher`, one each for Linear, GitHub,
+Obsidian, Twenty and Google Drive, and `usher-onboarding` — the setup walkthrough.
 
 > **If you got `Repository not found`:** GitHub does not think you have access. Either your invite to
 > the eyro-ai organisation has not arrived, or a different GitHub account is signed in. Run
 > `gh auth status` and check. That error says "not found" rather than "no permission" on purpose —
 > GitHub will not confirm a private repository exists to someone who cannot see it.
+
+---
+
+> **Faster route:** with Usher installed, you can type `set up Usher` and it will walk you through
+> the remaining steps, check what is already connected, and verify each one as it goes. The steps
+> below are the same thing done by hand — follow either.
 
 ---
 
@@ -222,7 +214,13 @@ If you were given a Twenty address and key, put them in a file called `.env` in 
 ```bash
 echo 'TWENTY_BASE_URL=the-address-you-were-given' >> ~/.env
 echo 'TWENTY_API_KEY=the-key-you-were-given' >> ~/.env
+chmod 600 ~/.env
 ```
+
+That last line makes the file readable only by you — at default permissions a `.env` is readable by
+anyone else with an account on the Mac. If those two variables are already in the file, edit the
+existing lines rather than adding more: the first `TWENTY_API_KEY=` line is the one that gets read,
+so a newer key added underneath is ignored.
 
 The first time you ask a question about people or customers, Usher will find that file and ask
 whether to use it. Say yes and it remembers.
@@ -270,7 +268,7 @@ Ask follow-ups in plain language. It keeps the thread.
 |---|---|
 | `/plugin isn't available in this environment` | Expected in the Mac app. Use Route A or B in Step 4. |
 | `Repository not found` | Wrong GitHub account, or your eyro-ai invite has not arrived. Run `gh auth status`. |
-| Fewer than six `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
+| Fewer than seven `usher` entries | An older version is installed, or Claude has not restarted. Run `claude plugin update usher`, then quit with `⌘ Q` and reopen. |
 | No `usher` entries at all | The plugin did not load. Check Step 4 ran without an error, then restart Claude. |
 | GitHub questions return nothing, no error | Either a different GitHub account is active — `gh auth status` shows which — or your project folder points somewhere unrelated. See Step 2. |
 | Answers about the wrong company's work | Linear is connected to the wrong workspace. **Settings → Connectors**, reconnect Linear, choose `eyro`. It sometimes takes two attempts. |
@@ -286,8 +284,10 @@ If a question gets no useful answer twice, the source may simply not be connecte
 **Notion is not built.** Questions about the handbook or written-up documentation will come back
 empty. That is not a fault, and Usher will not pretend otherwise.
 
-**It only reads.** Usher never creates, edits or deletes anything — no issues, no notes, no
-pull requests, no CRM records. It cannot change your work by accident.
+**It only reads your work.** Every skill that answers a question never creates, edits or deletes
+anything in a source — no issues, no notes, no pull requests, no CRM records. The one exception writes
+nothing to a source either: the setup walkthrough saves your own answers, in your own settings file
+and the `.env` you name. Nothing Usher does can change your work by accident.
 
 **It sees exactly what you see.** Every source is queried with your own account, so Usher can never
 show you something you would not have access to yourself. Equally, it cannot see a project you have
