@@ -36,7 +36,12 @@ Searched: linear (3 results)
 | `usher-twenty` | People and companies you know, customers, deals | ready |
 | `usher-github` | How something was built, and why | ready |
 
-All read-only. Each runs under your own credentials, so it sees exactly what you see — nothing more.
+Every source skill is read-only — it never creates, edits or deletes anything in a source. Each runs
+under your own credentials, so it sees exactly what you see — nothing more.
+
+Alongside them, `usher-onboarding` connects the sources: say `set up Usher` and it probes what is
+already working and configures the rest. It is the one skill that writes, and it writes only your own
+settings file and the `.env` you name — never a source.
 
 ## Configuration
 

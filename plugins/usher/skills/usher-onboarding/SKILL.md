@@ -77,6 +77,11 @@ If that directory is not known, find it:
 find ~/.claude/plugins -maxdepth 6 -type d -path '*/usher/skills/usher-*' 2>/dev/null
 ```
 
+**This can return several matches** — the plugin cache keeps more than one installed version, and
+each holds the same skill directories. **Take one** and read the source list from it. They are the
+same set; listing a source twice because two cached copies were walked is the only way this goes
+wrong.
+
 `-maxdepth` goes before the tests, not after. GNU `find` warns when it comes later, and the warning
 in the output is easy to mistake for the search having failed.
 
@@ -147,6 +152,10 @@ as in Step 5, and it is the probe, not merely a setup-time check:
 curl -sS --max-time 15 -o /dev/null -w '%{http_code}' \
   -H "Authorization: Bearer $TWENTY_API_KEY" "$TWENTY_BASE_URL/rest/people?limit=1"
 ```
+
+**Run it with `$TWENTY_API_KEY` exactly as written — never substitute the key itself.** The text of a
+Bash command is displayed before it runs, so a key pasted into that header is on screen, in the
+transcript, and in the shell history of whatever ran it.
 
 `200` is **connected**; anything else is **configured but not answering**, read through the result
 table in Step 5 — `401` in particular means the key is a JWT that has expired.
@@ -262,15 +271,42 @@ which is why it is worth walking through.
 
 1. Ask for the **base URL** of the Twenty instance.
 2. Point the user at **Settings → APIs & Webhooks** in Twenty to generate an API key.
-3. Ask where to keep it, defaulting to `~/.env`, then append the two lines and lock the file down:
+3. Ask where to keep it, defaulting to `~/.env`.
+
+**Refuse a path inside a git repository.** Claude Code's working directory is usually a checkout, so
+`.env` in the folder in hand is the likeliest answer the user gives and the likeliest key to be
+committed and pushed:
 
 ```bash
-echo 'TWENTY_BASE_URL=<the url>' >> "$env_file"
-echo 'TWENTY_API_KEY=<the key>' >> "$env_file"
+if git -C "$(dirname "$env_file")" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "inside a git work tree - refuse and ask for a path outside it"
+fi
+```
+
+Say why in one line — a key written inside a repository gets committed and pushed sooner or later —
+and ask for somewhere outside it. `~/.env` is the suggestion.
+
+4. Write the two lines, **replacing them if they are already in the file**, and lock the file down:
+
+```bash
+umask 077
+tmp="$env_file.usher.tmp"
+grep -v '^TWENTY_BASE_URL=' "$env_file" 2>/dev/null | grep -v '^TWENTY_API_KEY=' > "$tmp"
+printf 'TWENTY_BASE_URL=%s\n' '<the url>' >> "$tmp"
+printf 'TWENTY_API_KEY=%s\n' '<the key>' >> "$tmp"
+mv "$tmp" "$env_file"
 chmod 600 "$env_file"
 ```
 
-**Say this to the user plainly, before running it:** that second command puts the key in clear text on
+**Never append a second `TWENTY_API_KEY=` line to a file that already has one.** Both this skill and
+`usher-twenty` read the value with `sed -n 's/^TWENTY_API_KEY=//p' … | head -1` — the **first** match
+wins. An appended key is therefore never read: the stale one keeps answering, the Step 6 re-probe
+returns the same `401`, and the file is now holding two secrets instead of one. That `head -1` is the
+contract to conform to, not a bug to route around, so a rewrite that turns this back into `>>` puts
+the repair path back where it was. Stripping the old lines first also makes this correct when the
+variables are absent, so there is no second code path to get wrong.
+
+**Say this to the user plainly, before running it:** those `printf` lines put the key in clear text on
 a command line, so it lands in the shell history of whatever runs it and is visible to anything
 watching the process list for the moment it runs. There is no way to write the file without the key
 passing through somewhere. The `chmod 600` is therefore not optional — it makes the file readable only
@@ -278,20 +314,25 @@ by its owner, and a `.env` at default permissions is world-readable on a shared 
 would rather not have the key on a command line at all, tell them to paste it into the file in their
 own editor and give this skill only the path.
 
-4. Record **only the path** in `twenty.env_file`, absolute, with `~` expanded.
-5. Verify with a real request — the same one Step 2 probes with, and re-run there every time:
+5. Record **only the path** in `twenty.env_file`, absolute, with `~` expanded.
+6. Verify with a real request — the same one Step 2 probes with, and re-run there every time. Read
+   the key out of the file into `$TWENTY_API_KEY` first, and pass **the variable**:
 
 ```bash
 curl -sS --max-time 15 -o /dev/null -w '%{http_code}' \
   -H "Authorization: Bearer $TWENTY_API_KEY" "$TWENTY_BASE_URL/rest/people?limit=1"
 ```
 
+**`$TWENTY_API_KEY`, never the literal key.** The command text is displayed before it runs, so
+pasting the key in puts it on screen and in the transcript — for a value that was just written to a
+`chmod 600` file precisely to keep it off both.
+
 Read the result as a fix, not a verdict:
 
 | Result | Means |
 |---|---|
 | `200` | Working. Report the base URL |
-| `401` | The key is a JWT and it has expired. Regenerate it under **Settings → APIs & Webhooks** and rewrite the line |
+| `401` | The key is a JWT and it has expired. Regenerate it under **Settings → APIs & Webhooks** and **replace** the existing line as in step 4 — appending a second one changes nothing, because the first match is the one that gets read |
 | A connection failure | The instance is not responding at that URL. Check the URL before touching the key |
 
 Note the shape of that command: it writes the key into a header and discards the body with
