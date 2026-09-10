@@ -23,8 +23,8 @@ What is Sarah's background?	usher-twenty
 Who works at Acme?	usher-twenty
 What are my notes on Acme?	usher-obsidian
 Who is assigned to EYR-56?	usher-linear
-What do we know about onboarding?	usher-linear,usher-github,usher-obsidian,usher-gdrive
-Tell me everything about the billing work	usher-linear,usher-github,usher-obsidian,usher-gdrive
+What do we know about onboarding?	usher-linear,usher-github,usher-obsidian,usher-gdrive,usher-twenty
+Tell me everything about the billing work	usher-linear,usher-github,usher-obsidian,usher-gdrive,usher-twenty
 What was said in the standup?	usher-gdrive
 What did we decide on the customer call?	usher-gdrive
 Find the pricing spreadsheet	usher-gdrive
