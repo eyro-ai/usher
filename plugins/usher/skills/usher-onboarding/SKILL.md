@@ -74,8 +74,11 @@ ls -1 "$skills_dir" | grep '^usher-' | grep -vx 'usher-onboarding'
 If that directory is not known, find it:
 
 ```bash
-find ~/.claude/plugins -type d -path '*/usher/skills/usher-*' -maxdepth 6 2>/dev/null
+find ~/.claude/plugins -maxdepth 6 -type d -path '*/usher/skills/usher-*' 2>/dev/null
 ```
+
+`-maxdepth` goes before the tests, not after. GNU `find` warns when it comes later, and the warning
+in the output is easy to mistake for the search having failed.
 
 The result of this step is the set of sources that exist on this machine. **Never name a source that
 is not in it** — not in a table, not as a suggestion, not as something that could be added. A source
@@ -86,13 +89,16 @@ whose skill is not installed is invisible, not missing.
 Probe every discovered source before asking the user anything. They choose against what is true, not
 against a blank list.
 
+**A probe is a read that something answered. Reading a setting is not a probe.** A recorded path
+proves a path was recorded, not that anything is there. Every row below ends in an observation:
+
 | Source | Probe | Report |
 |---|---|---|
 | linear | `get_workspace` | the workspace name |
-| gdrive | `search_files(query: "owner = 'me'", pageSize: 1)` | the `owner` field — the account that answered |
+| gdrive | `search_files(query: "owner = 'me'", pageSize: 1, excludeContentSnippets: true)` | the `owner` field — the account that answered |
 | github | `gh auth status` | the **active** account, and whether others are signed in |
-| obsidian | `obsidian.vaults` in `~/.usher/settings.json` | which vaults are recorded |
-| twenty | `$TWENTY_BASE_URL` and `$TWENTY_API_KEY`, else `twenty.env_file` in settings | the base URL, never the key |
+| obsidian | read `obsidian.vaults` from `~/.usher/settings.json`, then **stat every path in it** | the vaults that exist on disk, and by name any recorded path that does not |
+| twenty | read the credentials, then **make the real request** (both below) | the base URL and what the request returned, never the key |
 
 **Refer to MCP tools by their bare name** — `get_workspace`, `search_files` — never with an MCP
 prefix. The prefix differs between a plugin-installed connector and a claude.ai one, and hardcoding
@@ -100,6 +106,71 @@ either breaks the other.
 
 If a discovered source is not in this table, read its own `SKILL.md` to learn what it needs, and
 probe with the cheapest read it describes. Do not guess a probe.
+
+### Three states, not two
+
+Every source lands in exactly one of these, and the table in Step 3 must distinguish all three:
+
+| State | Means |
+|---|---|
+| **connected** | a probe just succeeded, and the account, workspace, org or path it reached is named |
+| **not configured** | nothing to probe with — no credentials, no recorded path. This is the state offered for setup |
+| **configured but not answering** | there were credentials or a recorded path, and the probe still failed. Say what failed and why |
+
+Never collapse the last two into one row. "Not configured" invites setup; "configured but not
+answering" means something that was working has broken, and the fix is different — a regenerated key,
+a vault that moved, a reconnected connector.
+
+### Probing twenty
+
+Read the credentials first, exactly as `usher-twenty` does — the environment, and failing that the
+path in `twenty.env_file`:
+
+```bash
+# 1. the environment
+[ -n "$TWENTY_BASE_URL" ] && [ -n "$TWENTY_API_KEY" ]   # if both set, use them
+
+# 2. else the .env recorded in settings
+env_file=<the twenty.env_file value from ~/.usher/settings.json>
+TWENTY_BASE_URL=$(sed -n 's/^TWENTY_BASE_URL=//p' "$env_file" | head -1 | tr -d "\"'")
+TWENTY_API_KEY=$(sed -n 's/^TWENTY_API_KEY=//p' "$env_file" | head -1 | tr -d "\"'")
+```
+
+Extract only those two lines. **Never source the whole file** — it usually holds unrelated tokens for
+unrelated services.
+
+If no credentials are found by either route, Twenty is **not configured**. Stop there; there is
+nothing to probe. If credentials were found, probe with the real request — this is the same command
+as in Step 5, and it is the probe, not merely a setup-time check:
+
+```bash
+curl -sS --max-time 15 -o /dev/null -w '%{http_code}' \
+  -H "Authorization: Bearer $TWENTY_API_KEY" "$TWENTY_BASE_URL/rest/people?limit=1"
+```
+
+`200` is **connected**; anything else is **configured but not answering**, read through the result
+table in Step 5 — `401` in particular means the key is a JWT that has expired.
+
+**Credentials on file are not a working Twenty.** A key recorded months ago has very likely expired,
+and reporting it as connected because the path is still in settings is a wrong answer that looks
+right — precisely the failure this skill exists to prevent.
+
+### Probing obsidian
+
+Read `obsidian.vaults` from `~/.usher/settings.json`, then stat each path:
+
+```bash
+for v in <each path in obsidian.vaults>; do
+  [ -d "$v" ] && echo "ok   $v" || echo "MISSING $v"
+done
+```
+
+No recorded vaults at all is **not configured**. Every recorded vault present is **connected** —
+report them. **A recorded vault that is not on disk is a failure, and the path goes in the report by
+name**: a vault that was renamed, moved, or lives on an unmounted volume answers nothing, and saying
+"connected" because settings still mention it is the same wrong-answer-that-looks-right failure.
+
+If some vaults exist and others do not, say both: name what is searchable and name what is missing.
 
 ## Step 3 — show what is true
 
@@ -111,23 +182,33 @@ looks unusual. The account name is the only thing that catches it, so it goes in
 time.
 
 ```
-| Source   | Status       | Reached                        |
-|----------|--------------|--------------------------------|
-| linear   | connected    | workspace "Eyro"               |
-| gdrive   | connected    | someone@example.com            |
-| github   | connected    | active account: someuser       |
-| obsidian | not set up   | no vaults recorded             |
-| twenty   | not set up   | no base URL found              |
+| Source   | Status                       | Reached                                      |
+|----------|------------------------------|----------------------------------------------|
+| linear   | connected                    | workspace "Eyro"                             |
+| gdrive   | connected                    | someone@example.com                          |
+| github   | connected                    | active account: someuser                     |
+| obsidian | configured but not answering | recorded vault missing: /Users/me/Old Vault  |
+| twenty   | not configured               | no credentials in the environment or settings|
 ```
+
+Use all three statuses from Step 2. A source with a recorded path or key that failed its probe is
+**configured but not answering** — never "not configured", which would send the user to set up
+something already set up, and never "connected".
 
 **A source is reported working only because a probe succeeded.** Never because the user said they
 clicked something, and never because a setting exists — a recorded path proves a path was recorded,
-not that anything answers.
+not that anything answers. This rule outranks anything else in this file: if some other line here
+could be read as letting a settings value stand in for a probe, it is wrong and this rule wins.
 
 ## Step 4 — ask which to set up
 
-Offer **only the sources that are not working**, as a multi-select. Report the working ones and leave
-them alone; do not re-ask about a source that just answered.
+Offer **only the sources that are not working**, as a multi-select — that is both failing states, *not
+configured* and *configured but not answering*. Report the connected ones and leave them alone; do not
+re-ask about a source that just answered.
+
+Say which of the two a source is in when you offer it. Setting up something for the first time and
+repairing something that has stopped answering are different jobs, and the user knows which they are
+looking at.
 
 If the user wants to change a source that is already working — a different vault, a different
 account — do that on request. Do not volunteer it.
@@ -181,15 +262,24 @@ which is why it is worth walking through.
 
 1. Ask for the **base URL** of the Twenty instance.
 2. Point the user at **Settings → APIs & Webhooks** in Twenty to generate an API key.
-3. Ask where to keep it, defaulting to `~/.env`, and append the two lines:
+3. Ask where to keep it, defaulting to `~/.env`, then append the two lines and lock the file down:
 
 ```bash
 echo 'TWENTY_BASE_URL=<the url>' >> "$env_file"
 echo 'TWENTY_API_KEY=<the key>' >> "$env_file"
+chmod 600 "$env_file"
 ```
 
+**Say this to the user plainly, before running it:** that second command puts the key in clear text on
+a command line, so it lands in the shell history of whatever runs it and is visible to anything
+watching the process list for the moment it runs. There is no way to write the file without the key
+passing through somewhere. The `chmod 600` is therefore not optional — it makes the file readable only
+by its owner, and a `.env` at default permissions is world-readable on a shared machine. If the user
+would rather not have the key on a command line at all, tell them to paste it into the file in their
+own editor and give this skill only the path.
+
 4. Record **only the path** in `twenty.env_file`, absolute, with `~` expanded.
-5. Verify with a real request:
+5. Verify with a real request — the same one Step 2 probes with, and re-run there every time:
 
 ```bash
 curl -sS --max-time 15 -o /dev/null -w '%{http_code}' \
@@ -256,6 +346,9 @@ Windows: %APPDATA%/Obsidian/obsidian.json
 Its `vaults` object maps an id to `{path, ts, open}`. Treat a **missing** `open` key as closed — not
 every entry has one.
 
+**Stat each chosen path before writing it**, and do not record one that is not a directory — say
+which, and ask again. A registry entry can outlive the vault it names.
+
 Write the chosen vaults to `obsidian.vaults` as a list of absolute paths, with `~` expanded.
 
 **The registry says which vaults *exist*; settings say which the user *wants searched*.** They are
@@ -267,11 +360,24 @@ If the registry is absent, ask for a path outright. Never guess one.
 ## Step 6 — re-probe and report
 
 After the chosen sources have been set up, **run every probe again** and print the same table as in
-Step 3, with the same columns and the same rule: a source is connected only because a probe just
-succeeded.
+Step 3, with the same columns, the same three statuses, and the same rule: a source is connected only
+because a probe just succeeded.
 
 Do not carry a row forward from the first table because nothing was changed for it — the point of the
 second table is that it is observed, not remembered.
+
+**Re-run means re-run the request, not re-read the setting.** In particular:
+
+- **twenty** — re-read the credentials and issue the `curl` again. A row that says `connected`
+  because a path is in `twenty.env_file` is exactly the stale verdict this table exists to prevent:
+  the key is a JWT, it expires, and an expired key reported as connected is a wrong answer that
+  looks right.
+- **obsidian** — stat every path in `obsidian.vaults` again, including ones just written. A path the
+  user typed or picked can still be wrong, and the moment to catch that is here, not on their first
+  question.
+- **linear**, **gdrive**, **github** — call `get_workspace`, `search_files` and `gh auth status`
+  again and name what answered, even if the user said the browser flow succeeded. What they saw in a
+  browser is not evidence that this machine can reach it.
 
 For anything still not working, say what remains to be done in one line, and say plainly that the
 rest of Usher works without it. A missing source narrows what can be answered; it does not break
