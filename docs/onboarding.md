@@ -114,17 +114,7 @@ You want to see your username and a tick. If it lists more than one account, not
 
 ## Step 4 — Install Usher
 
-**Do this in a terminal, not in the app.** Installing Usher is the one step the Mac app does not do
-reliably, and it is worth knowing why before you fight it:
-
-- Typing `/plugin` in the app answers `/plugin isn't available in this environment`. That command
-  exists only in the terminal version of Claude Code.
-- The app's plugin manager (**+** → **Plugins**) *looks* like it should work, and often fails with a
-  bare **"Failed to add marketplace."** The cause is that `eyro-ai/usher` is cloned over **SSH**, and
-  an app launched from the Dock usually cannot reach the SSH key your terminal can. Nothing is wrong
-  with your access.
-
-So use the terminal — you are already in one from Step 3. Two commands:
+Run these commands in terminal:
 
 ```bash
 claude plugin marketplace add eyro-ai/usher
@@ -150,34 +140,7 @@ claude plugin list
 The first should show `usher` alongside `claude-plugins-official`; the second should show
 `usher@usher`, its version, and `enabled`.
 
-**If you would rather the app's plugin manager worked**, tell Claude to clone over HTTPS instead of
-SSH — HTTPS uses the credentials `gh auth login` already put in your keychain:
-
-```bash
-launchctl setenv CLAUDE_CODE_PLUGIN_PREFER_HTTPS 1
-```
-
-Restart Claude afterwards. This is optional; the two commands above do not need it.
-
-**Setting up several machines?** You can declare it once in settings instead. Open
-`~/.claude/settings.json` and add these two keys alongside whatever is already there — do not replace
-the file:
-
-```json
-"extraKnownMarketplaces": {
-  "usher": { "source": { "source": "github", "repo": "eyro-ai/usher" } }
-},
-"enabledPlugins": {
-  "usher@usher": true
-}
-```
-
-Either way, **restart Claude** afterwards — quit with `⌘ Q` and open it again. Plugins only load at
-startup.
-
-To check it landed, type `/` in the prompt box (or click **+** → **Slash commands**) and look for
-entries beginning `usher`. There should be **seven**: `usher`, one each for Linear, GitHub,
-Obsidian, Twenty and Google Drive, and `usher-onboarding` — the setup walkthrough.
+Restart Claude Desktop afterwards.
 
 > **If you got `Repository not found`:** GitHub does not think you have access. Either your invite to
 > the eyro-ai organisation has not arrived, or a different GitHub account is signed in. Run
