@@ -95,15 +95,37 @@ skill file**, because none of this text will be there when it runs:
 Then add fixtures to `evals/routing.tsv`, including at least one **guard** proving a neighbouring
 skill still wins the questions it should.
 
+**And teach `usher-onboarding` to set it up.** A new source is not finished when it can answer; it is
+finished when someone with a fresh machine can reach it.
+
+Do not skip this because onboarding discovers its source list from the sibling `usher-*` skill
+directories. Discovery makes the source *appear* in the list; it cannot invent the two things that
+matter, and both have to be written by hand:
+
+- **A probe** that establishes the source is genuinely reachable, and reports *which* account,
+  workspace or org answered - not merely that something did.
+- **The setup steps**, split into what the skill can do itself and what only the user can do. OAuth
+  flows and anything that opens a browser fall in the second half, so the skill hands those over and
+  then re-checks rather than assuming.
+
+A source that appears in onboarding with no probe and no steps is worse than one that does not appear
+at all: it offers to set something up and then does nothing, which reads as a broken skill rather
+than an unbuilt one.
+
 ## Settings
 
 `~/.usher/settings.json` is shared by every skill. The rule — read-modify-write the whole object,
 never write a file containing only your own key — lives in `usher-obsidian`'s `SKILL.md`, because
 that is the only copy a running skill can read. Copy it into any skill that writes settings.
 
-Settings exist only where discovery cannot express intent, and there is no `usher-setup` skill: a
-skill that needs a value asks on first use and writes it. See [`docs/decisions.md`](docs/decisions.md)
-for why, and why that reversed twice.
+Settings exist only where discovery cannot express intent, and a skill that needs a value asks on
+first use and writes it. See [`docs/decisions.md`](docs/decisions.md) for why, and why that reversed
+twice.
+
+`usher-onboarding` does not change that. It writes the same keys in advance for someone who would
+rather do it all at once, and every source skill keeps its own asking — so **nothing has to be run
+before a first question**. If a source skill ever drops its asking because onboarding exists, the
+decision has been reversed by accident; record it as such rather than letting it happen quietly.
 
 ## Known gap — source skills do not verify the account they reached
 
