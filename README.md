@@ -4,21 +4,11 @@ Ask a question. Usher works out which system holds the answer, queries it in pla
 
 No index, no sync, no copy of your data.
 
-**New here, or on a fresh Mac?** Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
-nothing installed to a first answer using the Claude Desktop app, about 30 minutes.
 
 ## Install
 
-```
-/plugin marketplace add eyro-ai/usher
-/plugin install usher@usher
-```
-
-Those are terminal Claude Code. **In the Claude Desktop app `/plugin` is unavailable** — use
-`claude plugin marketplace add eyro-ai/usher` and `claude plugin install usher@usher` from a shell,
-or follow the onboarding guide above.
-
-Private repo — check `gh auth status` first. The wrong account gives you `Repository not found`, which means wrong identity, not a bad URL.
+Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
+nothing installed to a first answer using the Claude Desktop app, about 30 minutes.
 
 ## Use
 
