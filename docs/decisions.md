@@ -7,6 +7,35 @@ Newest first.
 
 ---
 
+## `usher-gdrive` asserts the Google account and refuses on mismatch
+
+Rejected: naming the account in the answer and leaving the reader to notice, which is what every
+other source skill does today.
+
+The known gap in `CLAUDE.md` says source skills verify that a source is *reachable*, never *which*
+account answered. Drive is where that stops being tolerable: meeting recordings land in **personal**
+Drives, so a personal and a work account are both plausible holders of the answer, and reaching the
+wrong one returns real files, cites them correctly, and emits a normal `Searched:` line. The machine
+this was built on proves the risk is not theoretical - its Drive connector is authorised against a
+personal Gmail account, not a work one.
+
+Naming the account in the answer was the cheap fix and was rejected: it puts the check on a reader
+who has no idea what the right answer looks like, on the one question where a wrong answer is
+indistinguishable from a right one.
+
+So `gdrive.account` in `~/.usher/settings.json` records the account the user *chose*, the skill
+establishes the account that actually answered with `search_files(owner = 'me')` before every
+question, and a mismatch **refuses** rather than degrades. Same shape as Obsidian's vault list:
+discovery says what exists, settings say what should be read.
+
+This is the pattern `CLAUDE.md` asks for, built once rather than retrofitted five times. The four
+existing source skills still do not do it.
+
+*Would reopen it:* a connector that exposes the authenticated account directly, making the
+`owner = 'me'` probe unnecessary.
+
+---
+
 ## `usher-twenty` reads its credentials at query time and stores only a path
 
 Rejected: discovery from the environment alone, which is what the spec said. Also rejected: asking

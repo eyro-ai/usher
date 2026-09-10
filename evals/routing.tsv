@@ -6,7 +6,7 @@ What is planned for next cycle?	usher-linear
 Show me open bugs	usher-linear
 Which projects are in progress?	usher-linear
 What is the status of EYR-56?	usher-linear
-What did the partner call decide?	none
+What did the partner call decide?	usher-gdrive
 How was the router skill implemented?	usher-github
 Why was the scan deploy gate made read-only?	usher-github
 What shipped in pull request 1?	usher-github
@@ -23,5 +23,13 @@ What is Sarah's background?	usher-twenty
 Who works at Acme?	usher-twenty
 What are my notes on Acme?	usher-obsidian
 Who is assigned to EYR-56?	usher-linear
-What do we know about onboarding?	usher-linear,usher-github,usher-obsidian
-Tell me everything about the billing work	usher-linear,usher-github,usher-obsidian
+What do we know about onboarding?	usher-linear,usher-github,usher-obsidian,usher-gdrive,usher-twenty
+Tell me everything about the billing work	usher-linear,usher-github,usher-obsidian,usher-gdrive,usher-twenty
+What was said in the standup?	usher-gdrive
+What did we decide on the customer call?	usher-gdrive
+Find the pricing spreadsheet	usher-gdrive
+What is in the Q3 deck?	usher-gdrive
+Is there a transcript of the partner meeting?	usher-gdrive
+What are my notes on the partner call?	usher-obsidian
+Who owns the meeting notes action items?	usher-linear
+Why does the transcript parser skip empty lines?	usher-github

@@ -115,8 +115,10 @@ the worst available failure mode.
 `usher-github` mitigates it accidentally: scoping searches to a derived owner yields *empty* results
 on a wrong account rather than another company's code. Safer, not the same as correct.
 
-The fix, when someone takes it: assert the expected workspace or org and refuse on mismatch. It
-applies to every source skill still unwritten, so it is cheaper as a pattern than as five retrofits.
+**`usher-gdrive` now does it, and is the reference.** It records `gdrive.account` in settings,
+establishes the account that actually answered with `search_files(owner = 'me')` before every
+question, and refuses on mismatch instead of degrading. Copy that shape into the remaining source
+skills; the four that predate it still do not verify anything.
 
 ## Layout
 

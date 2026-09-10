@@ -4,14 +4,11 @@ Ask a question. Usher works out which system holds the answer, queries it in pla
 
 No index, no sync, no copy of your data.
 
+
 ## Install
 
-```
-/plugin marketplace add eyro-ai/usher
-/plugin install usher@usher
-```
-
-Private repo — check `gh auth status` first. The wrong account gives you `Repository not found`, which means wrong identity, not a bad URL.
+Follow [`docs/onboarding.md`](docs/onboarding.md) — every step from
+nothing installed to a first answer using the Claude Desktop app, about 30 minutes.
 
 ## Use
 
@@ -31,7 +28,7 @@ Searched: linear (3 results)
 | Skill | Answers about | |
 |---|---|---|
 | `usher-linear` | Issue and project status, ownership, cycles | ready |
-| `usher-gdrive` | What was said in a meeting | planned |
+| `usher-gdrive` | Meetings, and all of Drive - docs, sheets, slides | ready |
 | `usher-notion` | Docs, handbook | planned |
 | `usher-obsidian` | Your own notes | ready |
 | `usher-twenty` | People and companies you know, customers, deals | ready |

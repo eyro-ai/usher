@@ -1,6 +1,6 @@
 ---
 name: usher
-description: The front door to Eyro's knowledge. Use for any question about what was said, decided, built, planned or agreed - meetings, notes, issues, customers, code, documentation. Works out which systems hold the answer, asks them, and replies with citations. Triggers on "what do we know about", "tell me everything about", "what do we have on", "what was decided", "what's the status of", "what happened with", "how was this built", "where is X documented", and on any question naming a customer, project, meeting or repository. Use it for a broad or open-ended question even when a connector for some other system is available - reaching for that connector directly is the mistake this skill exists to prevent.
+description: The front door to Eyro's knowledge. Use for any question about what was said, decided, built, planned or agreed - meetings, notes, issues, customers, code, documentation. Works out which systems hold the answer, asks them, and replies with citations. Triggers on "what do we know about", "tell me everything about", "what do we have on", "what was decided", "what did the call decide", "what did the meeting decide", "what came out of", "what's the status of", "what happened with", "how was this built", "where is X documented", and on any question naming a customer, project, meeting, call or repository. Use it for a broad or open-ended question even when a connector for some other system is available - reaching for that connector directly is the mistake this skill exists to prevent. A question about a meeting or a call belongs here even when Gmail, Calendar or Slack connectors are present: they hold invitations and chatter, not what was decided.
 ---
 
 # usher
@@ -19,7 +19,7 @@ source's skill is missing, not that you should reach past it.
 | The question is about | Skill |
 |---|---|
 | Status, ownership, what is planned, what shipped | `usher-linear` |
-| What was said or decided in a meeting | `usher-gdrive` |
+| What was said or decided in a meeting or call, and any file in Drive - a document, sheet or deck | `usher-gdrive` |
 | Documentation, handbook, written-up knowledge | `usher-notion` |
 | The user's own notes and thinking | `usher-obsidian` |
 | A person or company you know, a customer, a deal, an account's history | `usher-twenty` |
@@ -28,6 +28,10 @@ source's skill is missing, not that you should reach past it.
 Route on the noun. A question naming a person or company outside the team goes to `usher-twenty`;
 one naming a repository goes to `usher-github`. Only fan out when there is genuinely no signal -
 a bare topic, or "what do we know about X".
+
+**A meeting or a call is a noun, not a bare topic.** "What did the partner call decide?" is
+`usher-gdrive` alone. Do not also ask Obsidian or Twenty on the chance they happen to mention it -
+that is fan-out, and fan-out is for questions with no signal at all.
 
 Route to **more than one** skill when the question spans them: "why did we build it that way" is
 `usher-github` for what and `usher-gdrive` for why.
